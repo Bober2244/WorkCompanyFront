@@ -1,0 +1,57 @@
+@import "@/assets/variables.scss";
+
+
+
+
+.enter-screen__links {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.enter-screen__link-signup {
+  border-radius: $button-border-radius-1;
+  padding: 10px 20px;
+  border: none;
+}
+
+.router {
+  color: #1e1a3e;
+  text-decoration: none;
+}
+
+.enter-screen__link-signin {
+  background-color: black;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.subtitle {
+  font-size: $subtitle;
+}
+
+.enter-screen__links {
+  display: flex;
+  justify-content: center; /* Центрирование кнопок */
+  align-items: center;
+  gap: 10px; /* Расстояние между кнопками, измените значение по необходимости */
+}
+
+.enter-screen__image {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Центрирует изображение вертикально */
+  margin-top: 33px;
+}
+
+.enter-screen__image {
+  margin-top: 33px;
+}
+
+.bi-arrow-right {
+  color: whitesmoke;
+}
