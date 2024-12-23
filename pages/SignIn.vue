@@ -77,32 +77,27 @@ export default {
       }
     },
     async signIn() {
-      const getInputAll = document.querySelectorAll('.error');
-
       const emailLength = this.form.email.length > 0;
       const passwordLength = this.form.password.length > 0;
 
-      if (emailLength && passwordLength && getInputAll.length === 0) {
+      if (emailLength && passwordLength && document.querySelectorAll('.error').length === 0) {
         try {
           const response = await axios.post('https://localhost:7265/Auth/login', {
             Email: this.form.email,
             Password: this.form.password,
           }, {
-            withCredentials: true  // Добавляем эту настройку
+            withCredentials: true,
           });
 
-          console.log(response);
           const token = response.data.jwt;
 
           if (token && response.status === 200) {
-
             localStorage.setItem('jwt', token);
 
-            this.$store.dispatch('login', {
-              userId: response.data.id, // ID пользователя, полученное с сервера
-              role: response.data.role, // Роль пользователя, полученная с сервера
+            await this.$store.dispatch('login', {
+              userId: response.data.id,
+              role: response.data.role,
             });
-
 
             this.$router.push('/home');
           } else {
@@ -114,6 +109,7 @@ export default {
         }
       }
     }
+
 
   }
 }

@@ -1,15 +1,39 @@
 <template>
   <div class="container">
-    <!-- Поисковая строка -->
-    <div class="search-bar my-3">
-      <input type="text" v-model="searchQuery" class="form-control" placeholder="Поиск по имени, email или телефону" />
+    <!-- Фильтры -->
+    <div class="filters my-3">
+      <div class="filter-item">
+        <label for="dateFilter">Дата заявки:</label>
+        <input
+            type="date"
+            v-model="dateFilter"
+            class="form-control"
+        />
+      </div>
+
+      <div class="filter-item">
+        <label for="constructionFilter">Срок строительства (в месяцах):</label>
+        <input
+            type="number"
+            v-model="constructionFilter"
+            class="form-control"
+            placeholder="Введите срок строительства"
+        />
+      </div>
+    </div>
+
+    <!-- Кнопка сброса -->
+    <div class="reset-button-container">
+      <button class="reset-button" @click="resetFilters">Сбросить фильтры</button>
     </div>
 
     <!-- Заголовок с кнопкой на одной линии -->
     <div class="bids-header">
       <h1 class="header-title">Заявки</h1>
-      <button class="create-button" @click="createBid">Создать заявку</button>
+      <button class="create-button" @click="openCreateBidModal">Создать заявку</button>
+      <button class="create-button" @click="openCreateOrderModal">Создать заказ</button>
     </div>
+
 
     <!-- Список заявок -->
     <div class="bids__list my-3">
@@ -17,91 +41,112 @@
         <BidItem :bid="bid" />
       </div>
     </div>
+
+    <add-bid v-if="isCreateBidModalOpen" @close="closeCreateBidModal" @created="loadBids" />
+    <add-order
+        v-if="isCreateOrderModalOpen"
+        :bids="bids"
+        @close="closeCreateOrderModal"
+        @created="handleCreateOrder"
+    />
+
   </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from 'vue';
+<script>
+import axios from 'axios';
+import AddBid from "@/components/AddBid.vue";
 import BidItem from "@/components/BidItem.vue";
+import AddOrder from "@/components/AddOrder.vue";
 
 // Данные для заявок
-const bids = ref([]);
-const searchQuery = ref("");
-
-// Метод для загрузки данных
-const loadBids = () => {
-  // Здесь пример с фейковыми данными, замените на запрос к вашему API
-  bids.value = [
-    {
-      id: 1,
-      dateOfRequest: "2024-12-10",
-      constructionPeriod: 6,
-      customer: {
-        id: 1,
-        name: "John Doe",
-        email: "john@example.com",
-        phone: "+1234567890",
-        image: "1.jpg",
-      },
-      orders: [
-        {
-          id: 101,
-          startDate: "2024-12-15",
-          endDate: "2024-12-20",
-          title: "Заказ 1",
-          amount: 500,
-        },
-        {
-          id: 102,
-          startDate: "2024-12-18",
-          endDate: "2024-12-24",
-          title: "Заказ 2",
-          amount: 700,
-        },
-      ],
+export default {
+  components: {
+    AddOrder,
+    AddBid,
+    BidItem
+  },
+  data() {
+    return {
+      bids: [],
+      customers: [],
+      dateFilter: '',
+      constructionFilter: '',
+      isCreateBidModalOpen: false,
+      isCreateOrderModalOpen: false,
+    };
+  },
+  computed: {
+    filteredBids() {
+      return this.bids.filter(bid => {
+        const matchesDate = !this.dateFilter || bid.dateOfRequest === this.dateFilter;
+        const matchesConstructionPeriod = !this.constructionFilter || bid.constructionPeriod == this.constructionFilter;
+        return matchesDate && matchesConstructionPeriod;
+      });
+    }
+  },
+  methods: {
+    loadBids() {
+      axios.get("https://localhost:7265/Bids")
+          .then(response => {
+            this.bids = response.data;
+          })
+          .catch(error => {
+            console.error("Ошибка при загрузке заявок:", error);
+          });
     },
-    {
-      id: 2,
-      dateOfRequest: "2024-12-12",
-      constructionPeriod: 12,
-      customer: {
-        id: 2,
-        name: "Jane Smith",
-        email: "jane@example.com",
-        phone: "+0987654321",
-        image: "2.jpg",
-      },
-      orders: [
-        {
-          id: 103,
-          startDate: "2024-12-15",
-          endDate: "2024-12-27",
-          title: "Order 3",
-          amount: 1200,
-        },
-      ],
+    loadOrders() {
+      axios.get("https://localhost:7265/Orders")
+          .then(response => {
+            this.orders = response.data;
+          })
+          .catch(error => {
+            console.error("Ошибка при загрузке заказов:", error);
+          });
     },
-  ];
+    openCreateOrderModal() {
+      this.isCreateOrderModalOpen = true;
+    },
+    closeCreateOrderModal() {
+      this.isCreateOrderModalOpen = false;
+    },
+    handleCreateOrder(newOrder) {
+      axios.post("https://localhost:7265/Orders", newOrder)
+          .then(() => {
+            this.loadOrders();
+          })
+          .catch(error => {
+            console.error("Ошибка при создании заказа:", error);
+          });
+    },
+    loadCustomers() {
+      axios.get("https://localhost:7265/Customers")
+          .then(response => {
+            this.customers = response.data;
+          })
+          .catch(error => {
+            console.error("Ошибка при загрузке клиентов:", error);
+          });
+    },
+    openCreateBidModal() {
+      this.isCreateBidModalOpen = true;
+    },
+    closeCreateBidModal() {
+      this.isCreateBidModalOpen = false;
+    },
+    resetFilters() {
+      this.dateFilter = '';
+      this.constructionFilter = '';
+    }
+  },
+  mounted() {
+    this.loadBids();
+    this.loadCustomers();
+    this.loadOrders();
+  }
 };
-
-// Загружаем данные при монтировании компонента
-onMounted(() => {
-  loadBids();
-});
-
-const filteredBids = computed(() => {
-  return bids.value.filter(bid => {
-    return bid.customer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        bid.customer.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        bid.customer.phone.includes(searchQuery.value);
-  });
-});
-
-function createBid() {
-  console.log("Кнопка 'Создать заявку' нажата.");
-  // Логика для создания новой заявки
-}
 </script>
+
 
 <style scoped>
 .container {
@@ -112,28 +157,23 @@ function createBid() {
   margin-right: auto;
 }
 
-.search-bar input {
-  padding: 10px;
-  font-size: 16px;
+.filters, .form-group {
+  margin-bottom: 1rem;
+}
+
+.filter-item label, .form-group label {
+  display: block;
+  font-weight: bold;
+}
+
+.filter-item input, .form-control {
   width: 100%;
+  padding: 10px;
   border-radius: 4px;
   border: 1px solid #ddd;
 }
 
-.bids-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.header-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-}
-
-.create-button {
+.create-button, .btn {
   background-color: #6c5ce7;
   color: white;
   border: none;
@@ -143,7 +183,12 @@ function createBid() {
   cursor: pointer;
 }
 
-.create-button:hover {
+.create-button:hover, .btn:hover {
   background-color: #5b4bdb;
+}
+
+.reset-button-container {
+  margin-top: 10px;
+  text-align: right;
 }
 </style>
