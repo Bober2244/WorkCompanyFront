@@ -13,12 +13,21 @@
       </ul>
     </div>
 
-
     <div class="order-item__actions">
-      <button class="action-button" @click="openModal">Откликнуться</button>
+      <button
+          class="action-button"
+          @click="approveOrder"
+          :disabled="order.workStatus === 'В работе'">
+        Одобрить выполнение заказа откликнувшимися бригадами
+      </button>
+      <button>
+        Материалы к заказу
+      </button>
     </div>
   </div>
 </template>
+
+
 
 <script>
 import axios from "axios";
@@ -30,33 +39,38 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      brigades: [], // Список бригад
-    };
-  },
+
   methods: {
-    async openModal() {
+    async approveOrder() {
+      if (this.order.workStatus === "В работе") {
+        alert("Этот заказ уже находится в статусе 'В работе'.");
+        return;
+      }
+
       try {
-        const response = await axios.get("https://localhost:7265/Brigades");
-        this.brigades = response.data;
+        // DTO для запроса
+        const orderDto = {
+          startDate: this.order.startDate, // Оставляем текущую дату начала
+          endDate: this.order.endDate,     // Оставляем текущую дату окончания
+          workStatus: "В работе",         // Новый статус
+          bidId: this.order.brigadeOrders[0]?.id || 0, // Используем ID первой бригады
+        };
 
-        // Передаем данные через query
-        this.$router.push({
-          name: "brigade-selection",
-          query: { brigades: JSON.stringify(this.brigades), orderId: this.order.id },
-        });
+        const response = await axios.patch(`https://localhost:7265/Orders/${this.order.id}`, orderDto);
 
-
+        // Обновление локальных данных или уведомление родительского компонента
+        this.$emit("order-updated", response.data);
+        alert("Статус заказа успешно обновлён!");
       } catch (error) {
-        console.error("Ошибка при загрузке бригад:", error);
-        alert("Не удалось загрузить список бригад.");
+        console.error("Ошибка при обновлении статуса заказа:", error.response?.data || error.message);
+        alert("Не удалось обновить статус заказа.");
       }
     },
-
   },
 };
 </script>
+
+
 
 
 

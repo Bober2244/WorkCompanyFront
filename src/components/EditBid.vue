@@ -55,8 +55,22 @@ export default {
     };
   },
   created() {
-    console.log('bid prop:', this.bid);
-    this.fetchCustomers();  // Загружаем список клиентов при создании компонента
+    if (this.bid) {
+      this.localBid = { ...this.bid };
+    } else {
+      console.error("Ошибка: проп bid не передан.");
+    }
+    this.fetchCustomers();
+  },
+  watch: {
+    bid: {
+      immediate: true,
+      handler(newBid) {
+        if (newBid) {
+          this.localBid = { ...newBid };
+        }
+      },
+    },
   },
   methods: {
     fetchCustomers() {
@@ -72,13 +86,13 @@ export default {
 
     },
     saveChanges() {
-      if (!this.localBid || !this.localBid.dateOfRequest) {
-        console.error('Ошибка: локальная заявка не имеет необходимых данных.');
+      if (!this.localBid.dateOfRequest || !this.localBid.constructionPeriod || !this.localBid.customerId) {
+        console.error("Ошибка: не все данные заполнены.");
         return;
       }
-      this.$emit('save', this.localBid); // Передаём обновлённые данные заявки
-      this.closeModal();
+      this.$emit('save', this.localBid);
     },
+
 
     closeModal() {
       this.$emit('close'); // Сообщаем родителю, что окно нужно закрыть

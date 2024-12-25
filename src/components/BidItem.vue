@@ -10,10 +10,11 @@
 
       <edit-bid
           :show="isModalOpen"
-          :bid="bid"
-          @save="handleSave(localBid)"
+          :bid="selectedBid"
+          @save="handleSave"
           @close="closeModal"
       />
+
 
       <button class="toggle-button" @click="toggleDetails">
         {{ showDetails ? 'Свернуть' : 'Развернуть' }}
@@ -28,10 +29,24 @@
             <p><strong>Дата начала:</strong> {{ formatDate(order.startDate) }}</p>
             <p><strong>Дата окончания:</strong> {{ formatDate(order.endDate) }}</p>
             <p :class="`status-${order.workStatus.toLowerCase()}`"><strong>Статус работы:</strong> {{ order.workStatus }}</p>
+            <p><strong>Откликнувшиеся бригады:</strong></p>
+            <ul>
+              <li v-for="brigade in order.brigadeOrders" :key="brigade.id">
+                {{ brigade.brigade.name }}
+              </li>
+            </ul>
             <div class="order-actions">
-              <button class="action-button" @click="editOrder(order.id)">Изменить</button>
+              <button class="action-button" @click="openOrderModal(order)">Изменить</button>
               <button class="action-button delete-button" @click="deleteOrder(order.id)">Удалить</button>
             </div>
+
+            <edit-order
+                :show="isOrderModalOpen"
+                :order="selectedOrder"
+                :bids="availableBids"
+                @save="handleOrderSave"
+                @close="closeOrderModal"
+            />
           </li>
         </ul>
       </div>
@@ -42,9 +57,10 @@
 <script>
 import axios from "axios";
 import EditBid from "@/components/EditBid.vue";
+import EditOrder from "@/components/EditOrder.vue";
 
 export default {
-  components: {EditBid},
+  components: {EditOrder, EditBid},
   props: {
     bid: {
       type: Object,
@@ -53,11 +69,30 @@ export default {
   },
   data() {
     return {
+      availableBids: [],
+      selectedOrder: null,
+      isOrderModalOpen: false,
+      selectedBid: null,
       isModalOpen: false,
       showDetails: false,
     };
   },
+  mounted() {
+    this.loadBids();
+
+  },
   methods: {
+
+    loadBids() {
+      axios.get("https://localhost:7265/Bids")
+          .then(response => {
+            this.availableBids = response.data;
+          })
+          .catch(error => {
+            console.error("Ошибка при загрузке заявок:", error);
+          });
+    },
+
     openModal(bid) {
       this.selectedBid = bid;
       this.isModalOpen = true;
@@ -76,14 +111,15 @@ export default {
       axios
           .patch(`https://localhost:7265/Bids/${updatedBid.id}`, payload)
           .then(() => {
-            console.log('Изменения успешно сохранены');
-            // Закрываем модальное окно после успешного сохранения
+            console.log("Изменения успешно сохранены");
             this.closeModal();
+
           })
-          .catch(error => {
-            console.error('Ошибка при сохранении изменений:', error);
+          .catch((error) => {
+            console.error("Ошибка при сохранении изменений:", error);
           });
     },
+
 
     toggleDetails() {
       this.showDetails = !this.showDetails;
@@ -93,15 +129,39 @@ export default {
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Date(date).toLocaleDateString('ru-RU', options);
     },
-    editOrder(orderId) {
-      // Логика для редактирования заказа
-      console.log(`Редактировать заказ с ID: ${orderId}`);
+    openOrderModal(order) {
+      this.selectedOrder = order;
+      this.isOrderModalOpen = true;
     },
+    closeOrderModal() {
+      this.isOrderModalOpen = false;
+    },
+    handleOrderSave(updatedOrder) {
+      console.log("Обновленный заказ:", updatedOrder);
+      const payload = {
+        startDate: updatedOrder.startDate,
+        endDate: updatedOrder.endDate,
+        workStatus: updatedOrder.workStatus,
+        bidId: Number(updatedOrder.bidId),
+      };
+
+      axios
+          .patch(`https://localhost:7265/Orders/${this.selectedOrder.id}`, payload)
+          .then(() => {
+            console.log("Изменения заказа сохранены");
+            this.closeOrderModal();
+          })
+          .catch((error) => {
+            console.error("Ошибка при сохранении заказа:", error);
+          });
+    },
+
     async deleteOrder(orderId) {
       try {
         await axios.delete(`https://localhost:7265/Orders/${orderId}`);
 
         this.$emit('order-deleted', orderId);
+
       } catch (error) {
         console.error('Ошибка при удалении заказа:', error);
       }

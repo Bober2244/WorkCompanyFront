@@ -52,6 +52,11 @@
           </label>
         </div>
 
+        <div class="form-group" v-if="form.role === '1'">
+          <input  class="form-control" v-model="customer.dateOfBirth" type="date" placeholder="Дата рождения" />
+          <input   class="form-control" v-model="customer.phoneNumber" type="tel" placeholder="Номер телефона" />
+        </div>
+
         <button type="submit" class="btn form__button">Зарегистрироваться </button>
       </form>
     </div>
@@ -78,6 +83,10 @@ export default {
         repeatPassword: '',
         phoneNumber: '',
         role: 0,
+      },
+      customer: {
+        dateOfBirth: "",
+        phoneNumber: "",
       },
       error: {
         username: false,
@@ -159,6 +168,15 @@ export default {
             role: this.form.role
           });
           console.log('Sign-up successful:', response.data);
+          if (this.form.role === "1") {
+            await axios.post("https://localhost:7265/Customers", {
+              fullName: this.form.fullName,
+              dateOfBirth: this.customer.dateOfBirth,
+              phoneNumber: this.customer.phoneNumber,
+              email: this.form.email,
+            });
+            console.log("Customer created successfully");
+          }
           this.$router.push('/sign-in');
         } catch (error) {
           console.error('Error during sign-up:', error.response ? error.response.data : error.message);

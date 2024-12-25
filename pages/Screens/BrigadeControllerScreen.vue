@@ -21,16 +21,11 @@
       </div>
     </div>
 
-    <!-- Кнопка сброса -->
-    <div class="reset-button-container">
+    <!-- Кнопки сброса и управления бригадой -->
+    <div class="button-container">
       <button class="reset-button" @click="resetFilters">Сбросить фильтры</button>
+      <button class="management-button" @click="goToManagement">Перейти к управлению бригады</button>
     </div>
-
-    <!-- Заголовок с кнопкой на одной линии -->
-<!--    <div class="orders-header">-->
-<!--      <h1 class="header-title">Заказы</h1>-->
-<!--      <button class="create-button" @click="openCreateOrderModal">Создать заказ</button>-->
-<!--    </div>-->
 
     <!-- Список заказов -->
     <div class="orders__list my-3">
@@ -39,24 +34,16 @@
       </div>
     </div>
 
-    <add-order
-        v-if="isCreateOrderModalOpen"
-        :bids="bids"
-        @close="closeCreateOrderModal"
-        @created="loadOrders"
-    />
-
   </div>
 </template>
 
+
 <script>
-import AddOrder from "@/components/AddOrder.vue";
 import OrderItem from "@/components/OrderItem.vue";
 import axios from "axios";
 export default {
   components: {
     OrderItem,
-    AddOrder,
   },
   data() {
     return {
@@ -92,12 +79,6 @@ export default {
       this.dateFilter = '';
       this.deliveryDateFilter = '';
     },
-    openCreateOrderModal() {
-      this.isCreateOrderModalOpen = true;
-    },
-    closeCreateOrderModal() {
-      this.isCreateOrderModalOpen = false;
-    },
     async loadOrders() {
       await axios.get("https://localhost:7265/Orders")
           .then(response => {
@@ -108,6 +89,10 @@ export default {
             console.error("Ошибка при загрузке заказов:", error);
           });
     },
+    goToManagement() {
+      // Redirect to management page (replace '/management' with the correct route)
+      this.$router.push('/managmentBrigade');
+    }
   },
   mounted() {
     this.loadBids();
@@ -116,22 +101,49 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .container {
   padding: 20px;
 }
+
 .filters {
   display: flex;
   gap: 20px;
 }
-.reset-button-container {
-  margin: 10px 0;
-}
-.orders-header {
+
+.button-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: space-between; /* Distribute buttons across the container */
 }
+
+.reset-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  background-color: #0056b3;
+}
+
+.management-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-left: auto; /* Move this button to the right */
+}
+
+.management-button:hover {
+  background-color: #218838;
+}
+
 .orders__list {
   display: flex;
   flex-direction: column;
