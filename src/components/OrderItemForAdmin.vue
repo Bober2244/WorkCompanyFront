@@ -11,6 +11,14 @@
           {{ brigade.brigade.name }}
         </li>
       </ul>
+
+      <p><strong>Привязанные материалы:</strong></p>
+      <ul v-if="attachedMaterials.length">
+        <li v-for="material in attachedMaterials" :key="material.id">
+          {{ material.name }} ({{ material.quantity }} {{ material.measurementUnit }})
+        </li>
+      </ul>
+      <p v-else>Нет привязанных материалов.</p>
     </div>
 
     <div class="order-item__actions">
@@ -20,7 +28,7 @@
           :disabled="order.workStatus === 'В работе'">
         Одобрить выполнение заказа откликнувшимися бригадами
       </button>
-      <button>
+      <button @click="$router.push({ name: 'MaterialForOrder', params: { orderId: order.id } })">
         Материалы к заказу
       </button>
     </div>
@@ -39,8 +47,24 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
 
+      attachedMaterials: [], // Список привязанных материалов
+    };
+  },
+  mounted() {
+    this.fetchAttachedMaterials(); // Загрузка привязанных материалов при инициализации компонента
+  },
   methods: {
+    async fetchAttachedMaterials() {
+      try {
+        const response = await axios.get(`https://localhost:7265/Orders/${this.order.id}/Materials`);
+        this.attachedMaterials = response.data;
+      } catch (error) {
+        console.error("Ошибка загрузки привязанных материалов:", error.message);
+      }
+    },
     async approveOrder() {
       if (this.order.workStatus === "В работе") {
         alert("Этот заказ уже находится в статусе 'В работе'.");

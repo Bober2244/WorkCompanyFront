@@ -8,6 +8,7 @@ import BrigadeSelection from "@/components/BrigadeSelection.vue";
 import Managment from "@/components/ManagmentComponent.vue";
 import BrigadeManagement from "@/components/BrigadeManagement.vue";
 import MaterialManagment from "@/components/MaterialManagment.vue";
+import MaterialForOrder from "@/components/MaterialForOrder.vue";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -40,6 +41,12 @@ const router = createRouter({
       name: "brigadeDetail",
       component: BrigadeManagement,
       props: true, // Позволяет передавать параметр ID как пропс
+    },
+    {
+      path: "/materialForOrder/:orderId/materials",
+      name: "MaterialForOrder",
+      component: MaterialForOrder,
+      props: true,
     },
 
   ],
