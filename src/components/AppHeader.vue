@@ -38,6 +38,10 @@ export default {
   data() {
     return {
       userRole: localStorage.getItem("userRole"),
+      userName: localStorage.getItem("userName"),
+      email: localStorage.getItem("email"),
+      phoneNumber: localStorage.getItem("phoneNumber"),
+      birthday: localStorage.getItem("birthday"),
     };
   },
   methods: {
@@ -58,6 +62,13 @@ export default {
       }
     },
   },
+  mounted() {
+    ModalWindow.data().role = this.userRole
+    ModalWindow.data().userName = this.userName
+    ModalWindow.data().email = this.email
+    ModalWindow.data().phoneNumber = this.phoneNumber
+    ModalWindow.data().birthday = this.birthday
+  }
 };
 </script>
 

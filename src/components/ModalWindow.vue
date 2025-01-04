@@ -1,21 +1,48 @@
 <template>
   <div v-if="visible" class="modal-overlay">
     <div class="modal-container">
-      <h3 class="modal-title">Выход из аккаунта</h3>
-      <p class="modal-message">Вы уверены, что хотите выйти из аккаунта?</p>
       <div class="modal-actions">
-        <button class="cancel-button" @click="closeModal">Отмена</button>
-        <button class="confirm-button" @click="confirmExit">Подтвердить</button>
+        <pre class="modal-message-title">ФИО: </pre>
+        <p class="modal-message">{{this.name}}</p>
+      </div>
+      <div class="modal-actions">
+        <pre class="modal-message-title">Аккаунт: </pre>
+        <p class="modal-message">{{this.email}}</p>
+      </div>
+      <div class="modal-actions">
+        <pre class="modal-message-title">Телефон: </pre>
+        <p class="modal-message">{{this.phoneNumber}}</p>
+      </div>
+      <div class="modal-actions">
+        <pre class="modal-message-title">Дата рождения: </pre>
+        <p class="modal-message">{{formatDate(this.birthday)}}</p>
+      </div>
+      <div class="modal-actions">
+        <pre class="modal-message-title">Роль: </pre>
+        <p v-if="this.role === '0'" class="modal-message">Бригадир</p>
+        <p v-if="this.role === '1'" class="modal-message">Заказчик</p>
+        <p v-if="this.role === '2'" class="modal-message">Админ</p>
+      </div>
+      <div class="modal-buttons">
+        <button class="cancel-button" @click="closeModal">Назад</button>
+        <button class="confirm-button" @click="confirmExit">Выйти</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { format } from 'date-fns';
+
 export default {
   data() {
     return {
       visible: false,
+      name: localStorage.getItem("userName"),
+      email: localStorage.getItem("email"),
+      role: localStorage.getItem("userRole"),
+      phoneNumber: localStorage.getItem("phoneNumber"),
+      birthday: localStorage.getItem("birthday"),
     };
   },
   methods: {
@@ -31,6 +58,9 @@ export default {
       this.$emit('confirm');
       this.closeModal();
     },
+    formatDate(isoDate) {
+      return format(new Date(isoDate), 'dd.MM.yyyy');
+    }
   },
 };
 </script>
@@ -54,24 +84,28 @@ export default {
   padding: 2rem;
   border-radius: 0.5rem;
   text-align: center;
-  width: 300px;
+  width: auto;
   z-index: 1010; /* Модальное окно поверх затемненного фона */
 }
 
-.modal-title, .modal-message {
-  color: #000; /* Черный цвет текста */
-}
-
-.modal-title {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
-
 .modal-message {
+  color: #000; /* Черный цвет текста */
   margin-bottom: 1.5rem;
 }
 
+.modal-message-title {
+  margin-bottom: 1.5rem;
+  color: black;
+  text-align: start;
+  font: bold 1rem/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .modal-actions {
+  display: flex;
+  justify-content: start;
+}
+
+.modal-buttons {
   display: flex;
   justify-content: space-around;
 }

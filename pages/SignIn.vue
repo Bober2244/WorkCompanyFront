@@ -7,7 +7,7 @@
       <div class="form-group">
         <label class="input-wrapper">Почта
           <input type="email" class="form-control" v-model="form.email" name="email" @blur="validateEmail"
-                 :class="{ error: error.email }" />
+                 :class="{ error: this.error.email }" />
         </label>
         <p v-if="error.email" class="error-message"> Введите валидную почту </p>
       </div>
@@ -88,6 +88,7 @@ export default {
           }, {
             withCredentials: true,
           });
+          const customer = await axios.get(`https://localhost:7265/Customers/${response.data.id}`)
 
           const token = response.data.jwt;
 
@@ -97,8 +98,11 @@ export default {
             await this.$store.dispatch('login', {
               userId: response.data.id,
               role: response.data.role,
+              userName: customer.data.fullName,
+              email: customer.data.email,
+              phoneNumber: customer.data.phoneNumber,
+              birthday: customer.data.dateOfBirth,
             });
-
             this.$router.push('/home');
           } else {
             alert('Invalid credentials');
@@ -109,8 +113,6 @@ export default {
         }
       }
     }
-
-
   }
 }
 </script>
