@@ -115,11 +115,92 @@ export default {
 }
 </script>
 
+
 <style scoped>
 .sign-in {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
+  background-image: url('@/assets/img/fon.jpg'); /* Добавьте фоновое изображение */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.headline {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.form {
+  max-width: 400px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-control {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.form-control.error {
+  border-color: #ff4d4d;
+}
+
+.error-message {
+  color: #ff4d4d;
+  font-size: 0.875rem;
+}
+
+.btn {
+  background-color: #d4a373;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #b58863;
+}
+
+.options {
+  margin-top: 1.5rem;
+}
+
+.options__description {
+  margin-bottom: 0.5rem;
+}
+
+.options__link {
+  color: #d4a373;
+  text-decoration: none;
+}
+
+.options__link:hover {
+  text-decoration: underline;
 }
 </style>

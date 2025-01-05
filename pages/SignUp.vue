@@ -1,7 +1,5 @@
 <template>
   <div class="sign-up wrapper">
-    <h1 class="headline sign-up__headline">Регистрация</h1>
-
     <div class="form-container">
       <form class="form sign-up__form" @submit.prevent="signUp">
         <div class="form-group">
@@ -193,17 +191,27 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Ensures full height of the viewport */
-  text-align: center; /* Centers the text inside the container */
+  height: 100vh; /* Высота на весь экран */
+  width: 100vw; /* Ширина на весь экран */
+  text-align: center;
+  background-image: url('@/assets/img/fon.jpg'); /* Замените путь на свой */
+  background-size: cover; /* Масштабирует фон */
+  background-position: center; /* Центрирует изображение */
+  background-repeat: no-repeat; /* Отключает повтор */
+  overflow: hidden; /* Предотвращает прокрутку из-за контента */
 }
 
+
 .form-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  max-width: 400px; /* Задайте максимальную ширину формы */
+  width: 100%; /* Ширина формы */
+  margin: 0 auto; /* Центрирование формы */
+  padding: 20px; /* Отступы внутри формы */
+  background-color: rgba(255, 255, 255, 0.9); /* Фон формы с прозрачностью */
+  border-radius: 8px; /* Скругление углов */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Легкая тень */
 }
+
 
 .form {
   width: 100%; /* Makes the form stretch to full width */

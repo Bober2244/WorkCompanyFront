@@ -16,7 +16,6 @@ export default {
 }
 
 .with-margin {
-  margin-top: 60px;
 }
 
 </style>
