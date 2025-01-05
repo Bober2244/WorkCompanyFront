@@ -31,7 +31,7 @@
     <div class="bids-header">
       <h1 class="header-title">Заявки</h1>
       <button class="create-button" @click="openCreateBidModal">Создать заявку</button>
-      <button class="create-button" @click="openCreateOrderModal">Создать заказ</button>
+<!--      <button class="create-button" @click="openCreateOrderModal">Создать заказ</button>-->
     </div>
 
 
@@ -109,9 +109,9 @@ export default {
             console.error("Ошибка при загрузке заказов:", error);
           });
     },
-    openCreateOrderModal() {
-      this.isCreateOrderModalOpen = true;
-    },
+    // openCreateOrderModal() {
+    //   this.isCreateOrderModalOpen = true;
+    // },
     closeCreateOrderModal() {
       this.isCreateOrderModalOpen = false;
     },

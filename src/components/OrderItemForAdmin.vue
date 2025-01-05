@@ -24,8 +24,7 @@
     <div class="order-item__actions">
       <button
           class="action-button"
-          @click="approveOrder"
-          :disabled="order.workStatus === 'В работе'">
+          @click="approveOrder">
         Одобрить выполнение заказа откликнувшимися бригадами
       </button>
       <button @click="$router.push({ name: 'MaterialForOrder', params: { orderId: order.id } })">
@@ -66,7 +65,7 @@ export default {
       }
     },
     async approveOrder() {
-      if (this.order.workStatus === "В работе") {
+      if (this.order.workStatus === "") {
         alert("Этот заказ уже находится в статусе 'В работе'.");
         return;
       }
