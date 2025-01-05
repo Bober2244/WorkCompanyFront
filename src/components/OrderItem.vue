@@ -13,12 +13,19 @@
       </ul>
     </div>
 
-
     <div class="order-item__actions">
-      <button class="action-button" @click="openModal">Откликнуться</button>
+      <!-- Кнопка "Откликнуться" будет отображаться только если нет откликнувшихся бригад -->
+      <button
+          class="action-button"
+          v-if="!order.brigadeOrders.length"
+          @click="openModal"
+      >
+        Откликнуться
+      </button>
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from "axios";
