@@ -38,7 +38,7 @@
     <!-- Список заявок -->
     <div class="bids__list my-3">
       <div v-for="bid in filteredBids" :key="bid.id" class="my-3">
-        <BidItem :bid="bid" />
+        <BidItem :bid="bid" @delete="deleteBid" />
       </div>
     </div>
 
@@ -89,12 +89,17 @@ export default {
     loadBids() {
       axios.get("https://localhost:7265/Bids")
           .then(response => {
-            this.bids = response.data;
+            console.log("Данные заявок:", response.data); // Логирование данных
+            this.bids = response.data.map(bid => ({
+              ...bid,
+              hasOrder: bid.orders !== null
+            }));
           })
           .catch(error => {
             console.error("Ошибка при загрузке заявок:", error);
           });
     },
+
     loadOrders() {
       axios.get("https://localhost:7265/Orders")
           .then(response => {

@@ -2,10 +2,17 @@
   <div class="bid-card">
     <div class="bid-summary">
       <div>
-        <p><strong>Дата заявки:</strong> {{ formatDate(bid.dateOfRequest) }}</p>
-        <p><strong>Срок строительства:</strong> {{ bid.constructionPeriod }} месяцев</p>
+        <p><strong>Дата заявки:</strong> {{ bid?.dateOfRequest || 'Не указано' }}</p>
+        <p><strong>Срок строительства:</strong> {{ bid?.constructionPeriod || 'Не указано' }} месяцев</p>
+
       </div>
-      <button class="action-button delete-button" @click="deleteBid(bid.id)">Удалить</button>
+      <button
+          class="action-button delete-button"
+          v-if="bid.orders.length !== 0"
+          @click="deleteBid(bid.id)"
+      >
+        Удалить
+      </button>
       <button class="action-button reset-button" @click="openModal(bid)">Изменить</button>
 
       <edit-bid
@@ -37,7 +44,12 @@
             </ul>
             <div class="order-actions">
               <button class="action-button" @click="openOrderModal(order)">Изменить</button>
-              <button class="action-button delete-button" @click="deleteOrder(order.id)">Удалить</button>
+              <button
+                  class="action-button delete-button"
+                  @click="deleteOrder(order.id)"
+              >
+                Удалить
+              </button>
             </div>
 
             <edit-order
@@ -65,8 +77,10 @@ export default {
     bid: {
       type: Object,
       required: true,
+      default: () => ({})
     },
   },
+
   data() {
     return {
       availableBids: [],
@@ -158,7 +172,9 @@ export default {
 
     async deleteOrder(orderId) {
       try {
-        await axios.delete(`https://localhost:7265/Orders/${orderId}`);
+        await axios.delete(`https://localhost:7265/Orders/${orderId}`).then(() => {
+          this.loadBids(); // Перезагрузить заявки после удаления
+        });
 
         this.$emit('order-deleted', orderId);
 
@@ -169,12 +185,12 @@ export default {
     async deleteBid(bidId) {
       try {
         await axios.delete(`https://localhost:7265/Bids/${bidId}`);
-        this.bids = this.bids.filter(bid => bid.id !== bidId);
-        this.$emit('order-deleted', bidId);
+        this.availableBids = this.availableBids.filter(bid => bid.id !== bidId); // Исправлено
+        this.$emit('bid-deleted', bidId); // Исправлено название события
       } catch (error) {
-        console.error('Ошибка при удалении заказа:', error);
+        console.error('Ошибка при удалении заявки:', error);
       }
-    },
+    }
   },
 };
 </script>

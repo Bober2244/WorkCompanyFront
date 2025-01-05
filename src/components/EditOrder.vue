@@ -16,9 +16,7 @@
         <div class="form-group">
           <label for="workStatus">Статус работы:</label>
           <select v-model="localOrder.workStatus" required>
-            <option value="Создан">Создан</option>
-            <option value="Откликнулся">Откликнулся</option>
-            <option value="В работе">В работе</option>
+            <option value="Создан">В работе</option>
             <option value="Готово">Готово</option>
           </select>
         </div>
