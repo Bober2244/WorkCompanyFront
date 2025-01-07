@@ -14,7 +14,14 @@
     </div>
 
     <div class="order-item__actions">
-      <!-- Кнопка "Откликнуться" будет отображаться только если нет откликнувшихся бригад -->
+      <button
+          class="action-button"
+          :disabled="isOrderModalOpen"
+          @click="openOrderModal(order)"
+      >
+        Изменить
+      </button>
+      <!-- Кнопка "Откликнуться" -->
       <button
           class="action-button"
           v-if="!order.brigadeOrders.length"
@@ -23,14 +30,26 @@
         Откликнуться
       </button>
     </div>
+
+
+
+    <edit-order-status
+        :show="isOrderModalOpen"
+        :order="selectedOrder"
+        :bids="availableBids"
+        @save="handleOrderSave"
+        @close="closeOrderModal"
+    />
   </div>
 </template>
 
 
 <script>
 import axios from "axios";
+import EditOrderStatus from "@/components/EditOrderStatus.vue";
 
 export default {
+  components: {EditOrderStatus},
   props: {
     order: {
       type: Object,
@@ -39,10 +58,42 @@ export default {
   },
   data() {
     return {
+      availableBids: [],
+      selectedOrder: null,
+      isOrderModalOpen: false,
       brigades: [], // Список бригад
     };
   },
   methods: {
+    closeOrderModal() {
+      this.isOrderModalOpen = false;
+    },
+    handleOrderSave(updatedOrder) {
+      console.log("Обновленный заказ:", updatedOrder);
+      const payload = updatedOrder.workStatus; // Передаем только статус как строку
+
+      axios
+          .patch(`https://localhost:7265/Orders/${this.selectedOrder.id}/status`, payload, {
+            headers: {
+              "Content-Type": "application/json", // Указываем формат данных
+            },
+          })
+          .then((response) => {
+            console.log("Изменения заказа сохранены:", response.data);
+            this.closeOrderModal();
+          })
+          .catch((error) => {
+            console.error("Ошибка при сохранении заказа:", error);
+          });
+    },
+    openOrderModal(order) {
+      if (!order) {
+        console.error("Заказ не найден");
+        return;
+      }
+      this.selectedOrder = { ...order }; // Создаем копию заказа
+      this.isOrderModalOpen = true; // Открываем модальное окно
+    },
     async openModal() {
       try {
         const response = await axios.get("https://localhost:7265/Brigades");
@@ -123,6 +174,10 @@ export default {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+}
+.action-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .modal {

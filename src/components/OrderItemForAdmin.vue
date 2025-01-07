@@ -24,6 +24,13 @@
     <div class="order-item__actions">
       <button
           class="action-button"
+          :disabled="isOrderModalOpen"
+          @click="openOrderModal(order)"
+      >
+        Изменить
+      </button>
+      <button
+          class="action-button"
           @click="approveOrder">
         Одобрить выполнение заказа откликнувшимися бригадами
       </button>
@@ -31,6 +38,15 @@
         Материалы к заказу
       </button>
     </div>
+
+    <edit-order-status
+        :show="isOrderModalOpen"
+        :order="selectedOrder"
+        :bids="availableBids"
+        @save="handleOrderSave"
+        @close="closeOrderModal"
+    />
+
   </div>
 </template>
 
@@ -38,8 +54,10 @@
 
 <script>
 import axios from "axios";
+import EditOrderStatus from "@/components/EditOrderStatus.vue";
 
 export default {
+  components: {EditOrderStatus},
   props: {
     order: {
       type: Object,
@@ -48,7 +66,9 @@ export default {
   },
   data() {
     return {
-
+      availableBids: [],
+      selectedOrder: null,
+      isOrderModalOpen: false,
       attachedMaterials: [], // Список привязанных материалов
     };
   },
@@ -56,6 +76,35 @@ export default {
     this.fetchAttachedMaterials(); // Загрузка привязанных материалов при инициализации компонента
   },
   methods: {
+    closeOrderModal() {
+      this.isOrderModalOpen = false;
+    },
+    handleOrderSave(updatedOrder) {
+      console.log("Обновленный заказ:", updatedOrder);
+      const payload = updatedOrder.workStatus; // Передаем только статус как строку
+
+      axios
+          .patch(`https://localhost:7265/Orders/${this.selectedOrder.id}/status`, payload, {
+            headers: {
+              "Content-Type": "application/json", // Указываем формат данных
+            },
+          })
+          .then((response) => {
+            console.log("Изменения заказа сохранены:", response.data);
+            this.closeOrderModal();
+          })
+          .catch((error) => {
+            console.error("Ошибка при сохранении заказа:", error);
+          });
+    },
+    openOrderModal(order) {
+      if (!order) {
+        console.error("Заказ не найден");
+        return;
+      }
+      this.selectedOrder = { ...order }; // Создаем копию заказа
+      this.isOrderModalOpen = true; // Открываем модальное окно
+    },
     async fetchAttachedMaterials() {
       try {
         const response = await axios.get(`https://localhost:7265/Orders/${this.order.id}/Materials`);

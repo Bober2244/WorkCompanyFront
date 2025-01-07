@@ -1,27 +1,13 @@
 <template>
   <div v-if="show" class="modal-overlay">
     <div class="modal-content">
-      <h3>Изменить заказ</h3>
+      <h3>Изменить статус заказа</h3>
       <form @submit.prevent="saveChanges">
         <div class="form-group">
-          <label for="startDate">Дата начала:</label>
-          <input type="date" v-model="localOrder.startDate" required />
-        </div>
-
-        <div class="form-group">
-          <label for="endDate">Дата окончания:</label>
-          <input type="date" v-model="localOrder.endDate" required />
-        </div>
-        <div class="form-group">
-          <label for="bidId">Заявка:</label>
-          <select v-model="localOrder.bidId" required>
-            <option
-                v-for="bid in bids"
-                :key="bid.id"
-                :value="bid.id"
-            >
-              {{ bid.name || `Заявка #${bid.id}` }}
-            </option>
+          <label for="workStatus">Статус работы:</label>
+          <select v-model="localOrder.workStatus" required>
+            <option value="В работе">В работе</option>
+            <option value="Готово">Готово</option>
           </select>
         </div>
         <div class="form-actions">
@@ -39,7 +25,6 @@
   </div>
 </template>
 
-
 <script>
 export default {
   props: {
@@ -51,10 +36,6 @@ export default {
       type: Object,
       required: true,
     },
-    bids: {
-      type: Array,
-      required: true, // Массив заявок передается из родительского компонента
-    },
   },
   data() {
     return {
@@ -63,22 +44,19 @@ export default {
   },
   methods: {
     saveChanges() {
-      console.log("dasdasdasdas", this.localOrder.id);
-      if (!this.localOrder.startDate || !this.localOrder.endDate || !this.localOrder.bidId) {
-        console.error('Ошибка: не заполнены все обязательные поля.');
+      if (!this.localOrder.workStatus) {
+        console.error("Ошибка: статус работы не выбран.");
         return;
       }
-      this.$emit('save', this.localOrder); // Отправляем обновленный заказ родителю
+      this.$emit("save", this.localOrder); // Отправляем обновленный статус родителю
       this.closeModal();
     },
     closeModal() {
-      this.$emit('close'); // Сообщаем родителю о закрытии модального окна
+      this.$emit("close"); // Сообщаем родителю о закрытии модального окна
     },
   },
 };
-
 </script>
-
 
 <style scoped>
 .modal-overlay {
@@ -110,10 +88,10 @@ export default {
   font-weight: bold;
 }
 .form-group select {
-  width: 100%; /* Увеличиваем ширину */
-  height: 40px; /* Увеличиваем высоту */
-  font-size: 16px; /* Увеличиваем размер шрифта */
-  padding: 5px; /* Добавляем отступы */
+  width: 100%;
+  height: 40px;
+  font-size: 16px;
+  padding: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
@@ -138,4 +116,3 @@ export default {
   color: #fff;
 }
 </style>
-

@@ -155,7 +155,7 @@ export default {
       const payload = {
         startDate: updatedOrder.startDate,
         endDate: updatedOrder.endDate,
-        workStatus: updatedOrder.workStatus,
+        workStatus: this.selectedOrder.workStatus,
         bidId: Number(updatedOrder.bidId),
       };
 
