@@ -13,7 +13,7 @@
       </ul>
     </div>
 
-    <div class="order-item__actions">
+    <div class="order-item__actions" v-if="order.workStatus !== 'Готово'">
       <button
           class="action-button"
           :disabled="isOrderModalOpen"
@@ -30,7 +30,6 @@
         Откликнуться
       </button>
     </div>
-
 
 
     <edit-order-status
@@ -91,7 +90,7 @@ export default {
         console.error("Заказ не найден");
         return;
       }
-      this.selectedOrder = { ...order }; // Создаем копию заказа
+      this.selectedOrder = {...order}; // Создаем копию заказа
       this.isOrderModalOpen = true; // Открываем модальное окно
     },
     async openModal() {
@@ -102,7 +101,7 @@ export default {
         // Передаем данные через query
         this.$router.push({
           name: "brigade-selection",
-          query: { brigades: JSON.stringify(this.brigades), orderId: this.order.id },
+          query: {brigades: JSON.stringify(this.brigades), orderId: this.order.id},
         });
 
 
@@ -117,9 +116,18 @@ export default {
 </script>
 
 
-
-
 <style scoped>
+.status-готово {
+  color: green;
+  font-weight: bold;
+}
+.status-выполняется {
+  color: orange;
+}
+.status-начато {
+  color: blue;
+}
+
 /* Основной стиль компонента */
 .order-item {
   display: flex;
@@ -175,6 +183,7 @@ export default {
   align-items: center;
   z-index: 1000;
 }
+
 .action-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;

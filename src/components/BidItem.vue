@@ -35,14 +35,16 @@
             <p><strong>Заказ #{{ order.id }}</strong></p>
             <p><strong>Дата начала:</strong> {{ formatDate(order.startDate) }}</p>
             <p><strong>Дата окончания:</strong> {{ formatDate(order.endDate) }}</p>
-            <p :class="`status-${order.workStatus.toLowerCase()}`"><strong>Статус работы:</strong> {{ order.workStatus }}</p>
+            <p :class="`status-${order.workStatus.toLowerCase()}`"><strong>Статус работы:</strong> {{
+                order.workStatus
+              }}</p>
             <p><strong>Откликнувшиеся бригады:</strong></p>
             <ul>
               <li v-for="brigade in order.brigadeOrders" :key="brigade.id">
                 {{ brigade.brigade.name }}
               </li>
             </ul>
-            <div class="order-actions">
+            <div class="order-actions" v-if="order.workStatus !== 'Готово'">
               <button class="action-button" @click="openOrderModal(order)">Изменить</button>
               <button
                   class="action-button delete-button"
@@ -140,7 +142,7 @@ export default {
     },
     formatDate(date) {
       if (!date) return 'Дата не указана';
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const options = {year: 'numeric', month: 'long', day: 'numeric'};
       return new Date(date).toLocaleDateString('ru-RU', options);
     },
     openOrderModal(order) {

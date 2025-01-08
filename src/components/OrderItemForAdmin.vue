@@ -21,7 +21,7 @@
       <p v-else>Нет привязанных материалов.</p>
     </div>
 
-    <div class="order-item__actions">
+    <div class="order-item__actions" v-if="order.workStatus !== 'Готово'">
       <button
           class="action-button"
           :disabled="isOrderModalOpen"
@@ -148,6 +148,17 @@ export default {
 
 
 <style scoped>
+.status-готово {
+  color: green;
+  font-weight: bold;
+}
+.status-выполняется {
+  color: orange;
+}
+.status-начато {
+  color: blue;
+}
+
 /* Основной стиль компонента */
 .order-item {
   display: flex;
