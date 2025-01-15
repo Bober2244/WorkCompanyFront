@@ -3,10 +3,33 @@
 
 
 
+@import "@/assets/variables.scss";
+
+.enter-screen {
+  background-image: url('@/assets/img/fon.jpg'); // Укажите путь к вашему изображению
+  background-size: cover; /* Масштабирует изображение, чтобы покрыть весь контейнер */
+  background-position: center; /* Центрирует изображение */
+  background-repeat: no-repeat; /* Отключает повторение изображения */
+  min-height: 100vh; /* Задаёт минимальную высоту компонента */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Центрирует содержимое по вертикали */
+  color: #fff; /* Цвет текста для контраста */
+}
+
+.enter-screen__headline {
+  color: #000000; /* Укажите нужный цвет, например, красно-оранжевый */
+  font-size: 2.5rem; /* Настройте размер текста, если нужно */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Пример тени текста для улучшения читаемости */
+  text-align: center; /* Центрирование текста */
+}
+
 .enter-screen__links {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
+  gap: 10px;
 }
 
 .enter-screen__link-signup {
@@ -34,11 +57,8 @@
   font-size: $subtitle;
 }
 
-.enter-screen__links {
-  display: flex;
-  justify-content: center; /* Центрирование кнопок */
-  align-items: center;
-  gap: 10px; /* Расстояние между кнопками, измените значение по необходимости */
+.bi-arrow-right {
+  color: whitesmoke;
 }
 
 .enter-screen__image {
@@ -50,8 +70,4 @@
 
 .enter-screen__image {
   margin-top: 33px;
-}
-
-.bi-arrow-right {
-  color: whitesmoke;
 }

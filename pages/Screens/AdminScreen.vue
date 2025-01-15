@@ -25,6 +25,7 @@
     <div class="button-container">
       <button class="reset-button" @click="resetFilters">Сбросить фильтры</button>
       <button class="management-button" @click="goToMaterial">Перейти к управлению материалами</button>
+      <button class="create-button" @click="openCreateOrderModal">Создать заказ</button>
 
     </div>
 
@@ -36,6 +37,13 @@
       </div>
     </div>
 
+    <add-order
+        v-if="isCreateOrderModalOpen"
+        :bids="bids"
+        @close="closeCreateOrderModal"
+        @created="handleCreateOrder"
+    />
+
   </div>
 </template>
 
@@ -43,8 +51,10 @@
 <script>
 import axios from "axios";
 import OrderItemForAdmin from "@/components/OrderItemForAdmin.vue";
+import AddOrder from "@/components/AddOrder.vue";
 export default {
   components: {
+    AddOrder,
     OrderItemForAdmin,
   },
   data() {
@@ -70,14 +80,27 @@ export default {
             : true;
 
         // Исключаем заказы со статусом "Создан"
-        const matchesStatus = order.workStatus !== "Создан";
-
         // Возвращаем true, если заказ соответствует всем условиям
-        return matchesStartDate && matchesEndDate && matchesStatus;
+        return matchesStartDate && matchesEndDate;
       });
     },
   },
   methods: {
+    handleCreateOrder(newOrder) {
+      axios.post("https://localhost:7265/Orders", newOrder)
+          .then(() => {
+            this.loadOrders();
+          })
+          .catch(error => {
+            console.error("Ошибка при создании заказа:", error);
+          });
+    },
+    closeCreateOrderModal() {
+      this.isCreateOrderModalOpen = false;
+    },
+    openCreateOrderModal() {
+      this.isCreateOrderModalOpen = true;
+    },
     goToMaterial() {
       // Redirect to management page (replace '/management' with the correct route)
       this.$router.push('/managmentMaterial');
@@ -86,10 +109,13 @@ export default {
       axios.get("https://localhost:7265/Bids")
           .then(response => {
             this.bids = response.data;
+            console.log(response.data)
           })
+
           .catch(error => {
             console.error("Ошибка при загрузке заявок:", error);
           });
+
     },
     resetFilters() {
       this.dateFilter = '';
