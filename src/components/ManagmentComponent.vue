@@ -53,13 +53,16 @@ export default {
       this.brigades = this.brigades.filter((brigade) => brigade.id !== id);
     },
     loadBrigades() {
+      const userId = localStorage.getItem('userId');
+      console.log(userId); // Вывод userId, если он сохранён
+
       axios
-          .get("https://localhost:7265/Brigades")
+          .get(`https://localhost:7265/Brigades/user-brigade/${userId}`)
           .then((response) => {
-            this.brigades = response.data;
+            this.brigades = [response.data]; // Добавляем в массив, так как возвращается одна бригада
           })
           .catch((error) => {
-            console.error("Ошибка при загрузке бригад:", error);
+            console.error("Ошибка при загрузке бригады:", error);
           });
     },
     openAddBrigadeModal() {

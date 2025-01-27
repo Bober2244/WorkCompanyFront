@@ -47,11 +47,15 @@ export default {
       brigadeDto: {
         name: "", // Name of the brigade
         workerCount: 1, // Number of workers
+        userId: null,
       },
     };
   },
   methods: {
     submitForm() {
+      const userId = localStorage.getItem('userId');
+
+      this.brigadeDto.userId = userId;
       // Send data to the server to add the new brigade
       axios
           .post("https://localhost:7265/Brigades", this.brigadeDto)
