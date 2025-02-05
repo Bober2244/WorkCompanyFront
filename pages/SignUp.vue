@@ -5,7 +5,7 @@
         <div class="form-group">
           <label class="input-wrapper">Полное имя
             <i class="bi bi-question-circle-fill" v-tooltip data-bs-toggle="tooltip" data-bs-placement="bottom"
-               data-bs-title="Поле должно содержать 2 слова, каждое из которых состоит из 3 и более символов"></i>
+               data-bs-title="Поле должно содержать фамилию и инициалы"></i>
             <input type="text" class="form-control" v-model="form.username" name="username" @blur="validateName"
                    :class="{ error: error.username }" />
           </label>
@@ -56,12 +56,11 @@
         </div>
 
         <button type="submit" class="btn form__button">Зарегистрироваться </button>
+        <div class="options sign-up__options">
+          <p class="options__description">Уже есть аккаунт?</p>
+          <router-link class="options__link" to="/sign-in"> Войти </router-link>
+        </div>
       </form>
-    </div>
-
-    <div class="options sign-up__options">
-      <p class="options__description">Уже есть аккаунт?</p>
-      <router-link class="options__link" to="/sign-in"> Войти </router-link>
     </div>
   </div>
 </template>

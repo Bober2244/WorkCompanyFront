@@ -20,13 +20,11 @@
       </div>
 
       <button type="submit" class="btn form__button">Войти</button>
+      <div class="options sign-up__options">
+        <p class="options__description">Еще нет аккаунта?</p>
+        <router-link class="options__link" to="/sign-up"> Зарегистрироваться </router-link>
+      </div>
     </form>
-
-    <div class="options sign-up__options">
-      <p class="options__description">Еще нет аккаунта?</p>
-      <router-link class="options__link" to="/sign-up"> Зарегистрироваться </router-link>
-    </div>
-
   </div>
 </template>
 

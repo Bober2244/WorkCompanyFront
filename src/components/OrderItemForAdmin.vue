@@ -29,11 +29,6 @@
       >
         Изменить
       </button>
-      <button
-          class="action-button"
-          @click="approveOrder">
-        Одобрить выполнение заказа откликнувшимися бригадами
-      </button>
       <button @click="$router.push({ name: 'MaterialForOrder', params: { orderId: order.id } })">
         Материалы к заказу
       </button>
@@ -111,31 +106,6 @@ export default {
         this.attachedMaterials = response.data;
       } catch (error) {
         console.error("Ошибка загрузки привязанных материалов:", error.message);
-      }
-    },
-    async approveOrder() {
-      if (this.order.workStatus === "") {
-        alert("Этот заказ уже находится в статусе 'В работе'.");
-        return;
-      }
-
-      try {
-        // DTO для запроса
-        const orderDto = {
-          startDate: this.order.startDate, // Оставляем текущую дату начала
-          endDate: this.order.endDate,     // Оставляем текущую дату окончания
-          workStatus: "В работе",         // Новый статус
-          bidId: this.order.brigadeOrders[0]?.id || 0, // Используем ID первой бригады
-        };
-
-        const response = await axios.patch(`https://localhost:7265/Orders/${this.order.id}`, orderDto);
-
-        // Обновление локальных данных или уведомление родительского компонента
-        this.$emit("order-updated", response.data);
-        alert("Статус заказа успешно обновлён!");
-      } catch (error) {
-        console.error("Ошибка при обновлении статуса заказа:", error.response?.data || error.message);
-        alert("Не удалось обновить статус заказа.");
       }
     },
   },

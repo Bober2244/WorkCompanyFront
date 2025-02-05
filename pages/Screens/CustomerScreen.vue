@@ -12,7 +12,7 @@
       </div>
 
       <div class="filter-item">
-        <label for="constructionFilter">Срок строительства (в месяцах):</label>
+        <label for="constructionFilter">Срок строительства (в днях):</label>
         <input
             type="number"
             v-model="constructionFilter"

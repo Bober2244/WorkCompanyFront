@@ -3,7 +3,7 @@
     <div class="bid-summary">
       <div>
         <p><strong>Дата заявки:</strong> {{ bid?.dateOfRequest || 'Не указано' }}</p>
-        <p><strong>Срок строительства:</strong> {{ bid?.constructionPeriod || 'Не указано' }} месяцев</p>
+        <p><strong>Срок строительства:</strong> {{ bid?.constructionPeriod || 'Не указано' }} дней</p>
 
       </div>
       <button
