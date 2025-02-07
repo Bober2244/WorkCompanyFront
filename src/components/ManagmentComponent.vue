@@ -20,7 +20,10 @@
 
     <!-- Кнопка для добавления новой бригады -->
     <div class="add-brigade">
-      <button @click="openAddBrigadeModal">Добавить бригаду</button>
+      <button
+          v-if="brigades.length === 0"
+          @click="openAddBrigadeModal">Добавить бригаду
+      </button>
     </div>
 
     <!-- Модальное окно для добавления бригады -->

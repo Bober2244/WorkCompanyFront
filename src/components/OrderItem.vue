@@ -24,7 +24,7 @@
       <!-- Кнопка "Откликнуться" -->
       <button
           class="action-button"
-          v-if="!order.brigadeOrders.length"
+          v-if="isUserResponsible"
           @click="openModal"
       >
         Откликнуться
@@ -61,6 +61,7 @@ export default {
       selectedOrder: null,
       isOrderModalOpen: false,
       brigades: [], // Список бригад
+      isUserResponsible: false,
     };
   },
   methods: {
@@ -104,14 +105,49 @@ export default {
           query: {brigades: JSON.stringify(this.brigades), orderId: this.order.id},
         });
 
-
       } catch (error) {
         console.error("Ошибка при загрузке бригад:", error);
         alert("Не удалось загрузить список бригад.");
       }
     },
+    async checkResponsibility(order) {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        console.error("Пользователь не авторизован");
+        this.isUserResponsible = false;
+        return;
+      }
 
+      try {
+        const response = await axios.get(
+            `https://localhost:7265/Brigades/user-brigade/${userId}`
+        );
+        const userBrigadeName = response.data.name;
+
+        const isBrigadeInOrder = order.brigadeOrders.some(
+            (tetheredBrigade) => tetheredBrigade.brigade.name === userBrigadeName
+        );
+
+        this.isUserResponsible = !isBrigadeInOrder;
+      } catch (error) {
+        console.error("Ошибка при получении бригады пользователя:", error);
+        this.isUserResponsible = false;
+      }
+    },
   },
+  watch: {
+    order: {
+      immediate: true,
+      handler(newOrder) {
+        if (newOrder) {
+          this.checkResponsibility(newOrder);
+        }
+      },
+    },
+  },
+  mounted() {
+    this.checkResponsibility(this.order);
+  }
 };
 </script>
 
