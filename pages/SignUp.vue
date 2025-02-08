@@ -167,7 +167,7 @@ export default {
           console.log('Sign-up successful:', response.data);
           if (this.form.role === "1") {
             await axios.post("https://localhost:7265/Customers", {
-              fullName: this.form.fullName,
+              fullName: this.form.username,
               dateOfBirth: this.customer.dateOfBirth,
               phoneNumber: this.customer.phoneNumber,
               email: this.form.email,

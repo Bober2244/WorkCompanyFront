@@ -7,14 +7,14 @@
       <div class="form-group">
         <label class="input-wrapper">Почта
           <input type="email" class="form-control" v-model="form.email" name="email" @blur="validateEmail"
-                 :class="{ error: this.error.email }" />
+                 :class="{ error: this.error.email }"/>
         </label>
         <p v-if="error.email" class="error-message"> Введите валидную почту </p>
       </div>
 
       <div class="form-group">
         <label class="input-wrapper">Пароль
-          <input type="password" class="form-control" v-model="form.password" name="password" />
+          <input type="password" class="form-control" v-model="form.password" name="password"/>
           <i class="bi bi-eye-slash icon" @click="setVisibility"></i>
         </label>
       </div>
@@ -22,7 +22,7 @@
       <button type="submit" class="btn form__button">Войти</button>
       <div class="options sign-up__options">
         <p class="options__description">Еще нет аккаунта?</p>
-        <router-link class="options__link" to="/sign-up"> Зарегистрироваться </router-link>
+        <router-link class="options__link" to="/sign-up"> Зарегистрироваться</router-link>
       </div>
     </form>
   </div>
@@ -31,6 +31,7 @@
 <script>
 import axios from 'axios'; // Импортируем axios для HTTP-запросов
 import {isValidEmail} from "@/utils/validation";
+
 export default {
   data() {
     return {
@@ -87,20 +88,30 @@ export default {
             withCredentials: true,
           });
           const customer = await axios.get(`https://localhost:7265/Customers/${response.data.id}`)
+          const user = await axios.get(`https://localhost:7265/User/${response.data.id}`, {})
 
           const token = response.data.jwt;
 
           if (token && response.status === 200) {
             localStorage.setItem('jwt', token);
 
-            await this.$store.dispatch('login', {
-              userId: response.data.id,
-              role: response.data.role,
-              userName: customer.data.fullName,
-              email: customer.data.email,
-              phoneNumber: customer.data.phoneNumber,
-              birthday: customer.data.dateOfBirth,
-            });
+            if (response.data.role === 1) {
+              await this.$store.dispatch('loginCustomer', {
+                userId: response.data.id,
+                role: response.data.role,
+                userName: user.data.userName,
+                email: user.data.email,
+                phoneNumber: customer.data.phoneNumber,
+                birthday: customer.data.dateOfBirth,
+              });
+            } else {
+              await this.$store.dispatch('login', {
+                userId: response.data.id,
+                role: response.data.role,
+                userName: user.data.userName,
+                email: user.data.email,
+              });
+            }
             this.$router.push('/home');
           } else {
             alert('Invalid credentials');

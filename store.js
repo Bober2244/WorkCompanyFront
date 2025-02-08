@@ -36,13 +36,19 @@ export default new Vuex.Store({
         },
     },
     actions: {
-        login({ commit }, { userId, role, userName, email, phoneNumber, birthday }) {
+        loginCustomer({ commit }, { userId, role, userName, email, phoneNumber, birthday }) {
             commit("setUserId", userId);
             commit("setUserRole", role);
             commit("setUserName", userName);
             commit("setEmail", email);
             commit("setPhoneNumber", phoneNumber);
             commit("setBirthday", birthday);
+        },
+        login({ commit }, { userId, role, userName, email }) {
+            commit("setUserId", userId);
+            commit("setUserRole", role);
+            commit("setUserName", userName);
+            commit("setEmail", email);
         },
         logout({ commit }) {
             commit("setUserId", null);

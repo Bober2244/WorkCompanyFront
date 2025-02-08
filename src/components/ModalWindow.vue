@@ -9,11 +9,15 @@
         <pre class="modal-message-title">Аккаунт: </pre>
         <p class="modal-message">{{this.email}}</p>
       </div>
-      <div class="modal-actions">
+      <div
+          class="modal-actions"
+          v-if="this.role==='1'">
         <pre class="modal-message-title">Телефон: </pre>
         <p class="modal-message">{{this.phoneNumber}}</p>
       </div>
-      <div class="modal-actions">
+      <div
+          class="modal-actions"
+          v-if="this.role==='1'">
         <pre class="modal-message-title">Дата рождения: </pre>
         <p class="modal-message">{{formatDate(this.birthday)}}</p>
       </div>
