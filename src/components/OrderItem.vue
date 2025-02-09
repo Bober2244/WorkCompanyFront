@@ -25,7 +25,7 @@
       <button
           class="action-button"
           v-if="isUserResponsible"
-          @click="openModal"
+          @click="respond"
       >
         Откликнуться
       </button>
@@ -94,17 +94,17 @@ export default {
       this.selectedOrder = {...order}; // Создаем копию заказа
       this.isOrderModalOpen = true; // Открываем модальное окно
     },
-    async openModal() {
+    async respond() {
       try {
-        const response = await axios.get("https://localhost:7265/Brigades");
-        this.brigades = response.data;
+        const userId = localStorage.getItem("userId");
+        const response = await axios.get(`https://localhost:7265/Brigades/user-brigade/${userId}`)
 
-        // Передаем данные через query
-        this.$router.push({
-          name: "brigade-selection",
-          query: {brigades: JSON.stringify(this.brigades), orderId: this.order.id},
-        });
-
+        await axios
+            .post(`https://localhost:7265/orders/${this.order.id}/apply`,
+              Number(response.data.id), // отправляем только brigadeId как число
+            {
+              headers: { "Content-Type": "application/json" },
+            })
       } catch (error) {
         console.error("Ошибка при загрузке бригад:", error);
         alert("Не удалось загрузить список бригад.");
@@ -131,6 +131,7 @@ export default {
         this.isUserResponsible = !isBrigadeInOrder;
       } catch (error) {
         console.error("Ошибка при получении бригады пользователя:", error);
+        alert("Ошибка при получении бригады пользователя:", error)
         this.isUserResponsible = false;
       }
     },

@@ -87,7 +87,8 @@ export default {
           }, {
             withCredentials: true,
           });
-          const customer = await axios.get(`https://localhost:7265/Customers/${response.data.id}`)
+          let customer = {}
+          if (response.data.role === 1) customer = await axios.get(`https://localhost:7265/Customers/${response.data.id}`)
           const user = await axios.get(`https://localhost:7265/User/${response.data.id}`, {})
 
           const token = response.data.jwt;

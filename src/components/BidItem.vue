@@ -29,10 +29,10 @@
     </div>
     <transition>
       <div v-if="showDetails" class="bid-details">
-        <h4>Заказы:</h4>
+        <h4>Объекты:</h4>
         <ul>
           <li v-for="order in bid.orders" :key="order.id" class="order-item">
-            <p><strong>Заказ #{{ order.id }}</strong></p>
+            <p><strong>Объект #{{ order.id }}</strong></p>
             <p><strong>Дата начала:</strong> {{ formatDate(order.startDate) }}</p>
             <p><strong>Дата окончания:</strong> {{ formatDate(order.endDate) }}</p>
             <p :class="`status-${order.workStatus.toLowerCase()}`"><strong>Статус работы:</strong> {{

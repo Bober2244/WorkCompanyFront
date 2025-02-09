@@ -31,7 +31,6 @@
     <div class="bids-header">
       <h1 class="header-title">Заявки</h1>
       <button class="create-button" @click="openCreateBidModal">Создать заявку</button>
-<!--      <button class="create-button" @click="openCreateOrderModal">Создать заказ</button>-->
     </div>
 
 
@@ -80,14 +79,15 @@ export default {
     filteredBids() {
       return this.bids.filter(bid => {
         const matchesDate = !this.dateFilter || bid.dateOfRequest === this.dateFilter;
-        const matchesConstructionPeriod = !this.constructionFilter || bid.constructionPeriod == this.constructionFilter;
+        const matchesConstructionPeriod = !this.constructionFilter || bid.constructionPeriod === this.constructionFilter;
         return matchesDate && matchesConstructionPeriod;
       });
     }
   },
   methods: {
     loadBids() {
-      axios.get("https://localhost:7265/Bids")
+      const userId = localStorage.getItem("userId");
+      axios.get(`https://localhost:7265/Bids/${userId}`)
           .then(response => {
             console.log("Данные заявок:", response.data); // Логирование данных
             this.bids = response.data.map(bid => ({
@@ -109,9 +109,6 @@ export default {
             console.error("Ошибка при загрузке заказов:", error);
           });
     },
-    // openCreateOrderModal() {
-    //   this.isCreateOrderModalOpen = true;
-    // },
     closeCreateOrderModal() {
       this.isCreateOrderModalOpen = false;
     },

@@ -4,7 +4,6 @@ import SignUp from "../../pages/SignUp.vue";
 import SignIn from "../../pages/SignIn.vue";
 import EnterScreen from "../components/EnterScreen/EnterScreen.vue";
 import HomePage from "../../pages/HomePage.vue";
-import BrigadeSelection from "@/components/BrigadeSelection.vue";
 import Managment from "@/components/ManagmentComponent.vue";
 import BrigadeManagement from "@/components/BrigadeManagement.vue";
 import MaterialManagment from "@/components/MaterialManagment.vue";
@@ -17,13 +16,6 @@ const router = createRouter({
     { path: "/sign-in", component: SignIn, meta: { marginTop: true } },
     { path: "/sign-up", component: SignUp, meta: { marginTop: true } },
     { path: "/home", component: HomePage, meta: { marginTop: false } },
-    {
-      path: '/select-brigade',
-      name: 'brigade-selection',
-      component: BrigadeSelection,
-      meta: { marginTop: false },
-      props: true, // Передаем данные через пропсы
-    },
     {
       path: '/managmentBrigade',
       name: 'managmentComponent',

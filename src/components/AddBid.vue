@@ -13,15 +13,6 @@
         </div>
 
         <div class="form-group">
-          <label for="customerId">Заказчик:</label>
-          <select v-model="newBid.customerId" required class="wide-select">
-            <option v-for="customer in customers" :key="customer.id" :value="customer.id">
-              {{ customer.fullName }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
           <button type="submit" class="btn btn-primary">Создать заявку</button>
           <button type="button" class="btn btn-secondary" @click="closeCreateBidModal">Закрыть</button>
         </div>
@@ -39,7 +30,7 @@ export default {
       newBid: {
         dateOfRequest: '',
         constructionPeriod: '',
-        customerId: null,
+        customerId: localStorage.getItem('userId'),
       },
       customers: [],  // Массив для хранения клиентов
     };
@@ -77,6 +68,7 @@ export default {
           })
           .catch(error => {
             console.error('Ошибка при создании заявки:', error);
+            alert("Ошибка сервера или валидации")
           });
     },
 

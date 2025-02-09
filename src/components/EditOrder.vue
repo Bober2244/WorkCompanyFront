@@ -1,7 +1,7 @@
 <template>
   <div v-if="show" class="modal-overlay">
     <div class="modal-content">
-      <h3>Изменить заказ</h3>
+      <h3>Изменить объект</h3>
       <form @submit.prevent="saveChanges">
         <div class="form-group">
           <label for="startDate">Дата начала:</label>

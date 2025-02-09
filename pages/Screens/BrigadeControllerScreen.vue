@@ -24,7 +24,7 @@
     <!-- Кнопки сброса и управления бригадой -->
     <div class="button-container">
       <button class="reset-button" @click="resetFilters">Сбросить фильтры</button>
-      <button class="management-button" @click="goToManagement">Перейти к управлению бригады</button>
+      <button class="management-button" @click="goToManagement">Перейти к управлению бригадой</button>
     </div>
 
     <!-- Список заказов -->

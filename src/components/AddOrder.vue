@@ -17,7 +17,7 @@
         <div class="form-group">
           <label for="workStatus">Статус работы:</label>
           <select v-model="newOrder.workStatus" required>
-            <option value="Создан">В работе</option>
+            <option value="В работе">В работе</option>
             <option value="Готово">Готово</option>
           </select>
         </div>
@@ -26,7 +26,7 @@
           <label for="bidId">Заявка:</label>
           <select v-model="newOrder.bidId" required>
             <option v-for="bid in bids" :key="bid.id" :value="bid.id">
-              {{ bid.dateOfRequest }} ({{bid.constructionPeriod}} месяцев)
+              {{ bid.dateOfRequest }} ({{bid.constructionPeriod}} дней)
             </option>
           </select>
         </div>
