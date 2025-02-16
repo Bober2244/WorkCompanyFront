@@ -25,7 +25,7 @@
         <div class="form-group">
           <label for="bidId">Заявка:</label>
           <select v-model="newOrder.bidId" required>
-            <option v-for="bid in bids" :key="bid.id" :value="bid.id">
+            <option v-for="bid in filteredBids" :key="bid.id" :value="bid.id">
               {{ bid.dateOfRequest }} ({{bid.constructionPeriod}} дней)
             </option>
           </select>
@@ -56,6 +56,7 @@ export default {
         workStatus: 'Planned',
         bidId: '',
       },
+      filteredBids : this.bids.filter(b => {return b.orders.length === 0})
     };
   },
   methods: {

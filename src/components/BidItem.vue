@@ -8,7 +8,7 @@
       </div>
       <button
           class="action-button delete-button"
-          v-if="bid.orders.length !== 0"
+          v-if="bid.orders.length === 0"
           @click="deleteBid(bid.id)"
       >
         Удалить
@@ -29,10 +29,10 @@
     </div>
     <transition>
       <div v-if="showDetails" class="bid-details">
-        <h4>Объекты:</h4>
+        <h4>Сформирован заказ:</h4>
         <ul>
           <li v-for="order in bid.orders" :key="order.id" class="order-item">
-            <p><strong>Объект #{{ order.id }}</strong></p>
+            <p><strong>Заказ #{{ order.id }}</strong></p>
             <p><strong>Дата начала:</strong> {{ formatDate(order.startDate) }}</p>
             <p><strong>Дата окончания:</strong> {{ formatDate(order.endDate) }}</p>
             <p :class="`status-${order.workStatus.toLowerCase()}`"><strong>Статус работы:</strong> {{
@@ -45,8 +45,15 @@
               </li>
             </ul>
             <div class="order-actions" v-if="order.workStatus !== 'Готово'">
-              <button class="action-button" @click="openOrderModal(order)">Изменить</button>
               <button
+                  v-if="role !== '1'"
+                  class="action-button"
+                  @click="openOrderModal(order)"
+              >
+                Изменить
+              </button>
+              <button
+                  v-if="role !== '1'"
                   class="action-button delete-button"
                   @click="deleteOrder(order.id)"
               >
@@ -91,6 +98,7 @@ export default {
       selectedBid: null,
       isModalOpen: false,
       showDetails: false,
+      role: localStorage.getItem("userRole"),
     };
   },
   mounted() {
@@ -182,6 +190,7 @@ export default {
 
       } catch (error) {
         console.error('Ошибка при удалении заказа:', error);
+        alert("Ошибка при удалении заказа")
       }
     },
     async deleteBid(bidId) {
@@ -191,6 +200,7 @@ export default {
         this.$emit('bid-deleted', bidId); // Исправлено название события
       } catch (error) {
         console.error('Ошибка при удалении заявки:', error);
+        alert("Ошибка при удалении заявки")
       }
     }
   },

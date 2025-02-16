@@ -1,6 +1,6 @@
 <template>
   <div class="management">
-    <h3>Управление бригадами</h3>
+    <h3>Управление бригадой</h3>
 
     <!-- Кнопка для возвращения назад -->
     <div class="back-button">

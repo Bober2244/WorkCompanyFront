@@ -15,7 +15,12 @@
 
     <div class="actions">
       <button @click="goBack">Вернуться назад</button>
-      <button @click="toggleAddWorkerModal">Добавить работника</button>
+      <button
+          v-if="countIsNormal"
+          @click="toggleAddWorkerModal"
+      >
+        Добавить работника
+      </button>
       <!-- Удаление работника -->
       <div v-if="brigade.workers && brigade.workers.length > 0" class="delete-worker">
         <label for="worker-select">Выберите работника для удаления:</label>
@@ -53,6 +58,7 @@ export default {
       showAddWorkerModal: false,
       brigade: {}, // Данные бригады
       selectedWorkerId: null,
+      countIsNormal: true,
     };
   },
   methods: {
@@ -79,6 +85,7 @@ export default {
           .get(`https://localhost:7265/Brigades/${this.id}`)
           .then((response) => {
             this.brigade = response.data;
+            this.countIsNormal = this.brigade.workers.length < this.brigade.workerCount;
             console.log("Dsa", this.brigade);
           })
           .catch((error) => {

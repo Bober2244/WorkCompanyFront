@@ -107,8 +107,8 @@ export default {
               });
             } else {
               await this.$store.dispatch('login', {
-                userId: response.data.id,
-                role: response.data.role,
+                userId: user.data.id,
+                role: user.data.role,
                 userName: user.data.userName,
                 email: user.data.email,
               });

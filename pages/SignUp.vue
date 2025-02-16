@@ -177,6 +177,7 @@ export default {
           this.$router.push('/sign-in');
         } catch (error) {
           console.error('Error during sign-up:', error.response ? error.response.data : error.message);
+          alert("Ошибка регистрации")
         }
       }
     },

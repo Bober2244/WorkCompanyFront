@@ -14,6 +14,9 @@
 
         <div class="form-group">
           <button type="submit" class="btn btn-primary">Создать заявку</button>
+          <b>
+            &nbsp;
+          </b>
           <button type="button" class="btn btn-secondary" @click="closeCreateBidModal">Закрыть</button>
         </div>
       </form>

@@ -63,9 +63,10 @@ export default {
   },
   methods: {
     saveChanges() {
-      console.log("dasdasdasdas", this.localOrder.id);
+      console.log("localOrder.id:", this.localOrder.id);
       if (!this.localOrder.startDate || !this.localOrder.endDate || !this.localOrder.bidId) {
         console.error('Ошибка: не заполнены все обязательные поля.');
+        alert("Ошибка: не заполнены все обязательные поля.");
         return;
       }
       this.$emit('save', this.localOrder); // Отправляем обновленный заказ родителю
