@@ -14,7 +14,13 @@
       >
         Удалить
       </button>
-      <button class="action-button reset-button" @click="openModal(bid)">Изменить</button>
+      <button
+          class="action-button reset-button"
+          v-if="bid.orders.length === 0"
+          @click="openModal(bid)"
+      >
+        Изменить
+      </button>
 
       <edit-bid
           :show="isModalOpen"
@@ -34,6 +40,7 @@
         <ul>
           <li v-for="order in bid.orders" :key="order.id" class="order-item">
             <p><strong>Заказ #{{ order.id }}</strong></p>
+            <p><strong>Объект: </strong>{{ bid.objectName }}</p>
             <p><strong>Дата начала:</strong> {{ formatDate(order.startDate) }}</p>
             <p><strong>Дата окончания:</strong> {{ formatDate(order.endDate) }}</p>
             <p :class="`status-${order.workStatus.toLowerCase()}`"><strong>Статус работы:</strong> {{

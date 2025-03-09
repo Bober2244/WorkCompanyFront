@@ -60,8 +60,7 @@ export default {
         this.selectedMaterial = null;
         this.quantity = 1;
       } catch (error) {
-        console.error("Ошибка привязки материала:", error.message);
-        alert("Не удалось привязать материал.");
+        alert(`Не удалось привязать материал: ${error.response.data}`);
       }
     },
   },

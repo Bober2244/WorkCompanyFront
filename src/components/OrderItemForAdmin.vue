@@ -1,7 +1,8 @@
 <template>
   <div class="order-item">
     <div class="order-item__details">
-      <p><strong>Заказ #</strong> {{ order.id }}</p>
+      <p><strong>Заказ #</strong>{{ order.id }}</p>
+      <p><strong>Объект:</strong> {{ order?.bid.objectName }}</p>
       <p><strong>Дата начала:</strong> {{ order.startDate }}</p>
       <p><strong>Дата конца:</strong> {{ order.endDate }}</p>
       <p><strong>Статус:</strong> {{ order.workStatus }}</p>

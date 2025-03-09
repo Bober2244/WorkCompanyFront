@@ -11,6 +11,10 @@
           <label for="constructionPeriod">Срок строительства:</label>
           <input type="number" v-model="newBid.constructionPeriod" required />
         </div>
+        <div class="form-group">
+          <label for="objectName">Название объекта:</label>
+          <input type="text" v-model="newBid.objectName" required />
+        </div>
 
         <div class="form-group">
           <button type="submit" class="btn btn-primary">Создать заявку</button>
@@ -33,6 +37,7 @@ export default {
       newBid: {
         dateOfRequest: '',
         constructionPeriod: '',
+        objectName: '',
         customerId: localStorage.getItem('userId'),
       },
       customers: [],  // Массив для хранения клиентов
@@ -61,6 +66,7 @@ export default {
       const bidDto = {
         dateOfRequest: this.newBid.dateOfRequest,
         constructionPeriod: this.newBid.constructionPeriod,
+        objectName: this.newBid.objectName,
         customerId: this.newBid.customerId,
       };
 

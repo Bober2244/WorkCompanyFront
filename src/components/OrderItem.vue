@@ -5,7 +5,8 @@
       <p><strong>Дата начала:</strong> {{ order.startDate }}</p>
       <p><strong>Дата конца:</strong> {{ order.endDate }}</p>
       <p><strong>Статус:</strong> {{ order.workStatus }}</p>
-      <p><strong>Откликнувшиеся бригады:</strong></p>
+      <p><strong>Статус:</strong> {{ order.workStatus }}</p>
+      <p><strong>{{ order?.bid.objectName }}:</strong></p>
       <ul>
         <li v-for="brigade in order.brigadeOrders" :key="brigade.id">
           {{ brigade.brigade.name }}
