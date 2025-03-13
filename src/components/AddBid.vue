@@ -4,10 +4,6 @@
       <h3>Создание заявки</h3>
       <form @submit.prevent="submitCreateBid">
         <div class="form-group">
-          <label for="dateOfRequest">Дата заявки:</label>
-          <input type="date" v-model="newBid.dateOfRequest" required />
-        </div>
-        <div class="form-group">
           <label for="constructionPeriod">Срок строительства:</label>
           <input type="number" v-model="newBid.constructionPeriod" required />
         </div>
@@ -35,7 +31,6 @@ export default {
   data() {
     return {
       newBid: {
-        dateOfRequest: '',
         constructionPeriod: '',
         objectName: '',
         customerId: localStorage.getItem('userId'),
@@ -64,7 +59,7 @@ export default {
     // Функция отправки заявки
     submitCreateBid() {
       const bidDto = {
-        dateOfRequest: this.newBid.dateOfRequest,
+        dateOfRequest: new Date().toISOString().substring(0, 10),
         constructionPeriod: this.newBid.constructionPeriod,
         objectName: this.newBid.objectName,
         customerId: this.newBid.customerId,

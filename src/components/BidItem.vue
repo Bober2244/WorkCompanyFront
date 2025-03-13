@@ -138,6 +138,7 @@ export default {
         dateOfRequest: updatedBid.dateOfRequest,
         constructionPeriod: updatedBid.constructionPeriod,
         customerId: updatedBid.customerId,
+        objectName: updatedBid.objectName,
       };
 
       axios

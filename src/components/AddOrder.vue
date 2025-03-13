@@ -6,17 +6,17 @@
         <!-- Дата начала -->
         <div class="form-group">
           <label for="startDate">Дата начала:</label>
-          <input type="date" v-model="newOrder.startDate" required />
+          <input type="date" v-model="newOrder.startDate" readonly />
         </div>
         <!-- Дата окончания -->
         <div class="form-group">
           <label for="endDate">Дата окончания:</label>
-          <input type="date" v-model="newOrder.endDate" required />
+          <input type="date" v-model="newOrder.endDate" readonly />
         </div>
         <!-- Статус -->
         <div class="form-group">
           <label for="workStatus">Статус работы:</label>
-          <select v-model="newOrder.workStatus" required>
+          <select v-model="newOrder.workStatus" readonly>
             <option value="В работе">В работе</option>
             <option value="Готово">Готово</option>
           </select>
@@ -24,9 +24,9 @@
         <!-- Привязка к заявке -->
         <div class="form-group">
           <label for="bidId">Заявка:</label>
-          <select v-model="newOrder.bidId" required>
+          <select v-model="selectedBidId" required>
             <option v-for="bid in filteredBids" :key="bid.id" :value="bid.id">
-              {{ bid.dateOfRequest }} ({{bid.constructionPeriod}} дней)
+              {{ bid.customer.fullName }} {{ bid.dateOfRequest }} {{ bid.objectName }}
             </option>
           </select>
         </div>
@@ -53,17 +53,49 @@ export default {
       newOrder: {
         startDate: '',
         endDate: '',
-        workStatus: 'Planned',
+        workStatus: 'В работе', // Установите начальный статус
         bidId: '',
       },
-      filteredBids : this.bids.filter(b => {return b.orders.length === 0})
+      selectedBidId: '',
     };
+  },
+  computed: {
+    filteredBids() {
+      return this.bids.filter((b) => b.orders.length === 0);
+    },
   },
   methods: {
     createOrder() {
       const orderData = { ...this.newOrder };
       this.$emit('created', orderData); // Отправить данные в родительский компонент
       this.$emit('close'); // Закрыть модальное окно
+    },
+    calculateEndDate(startDate, constructionPeriod) {
+      if (!startDate || !constructionPeriod) return '';
+      const start = new Date(startDate);
+      const end = new Date(start);
+      end.setDate(start.getDate() + constructionPeriod);
+      return end.toISOString().split('T')[0]; // Форматируем дату в YYYY-MM-DD
+    },
+  },
+  watch: {
+    selectedBidId(newBidId) {
+      const selectedBid = this.filteredBids.find((bid) => bid.id === newBidId);
+      if (selectedBid) {
+        this.newOrder.startDate = selectedBid.dateOfRequest;
+        this.newOrder.endDate = this.calculateEndDate(
+            selectedBid.dateOfRequest,
+            selectedBid.constructionPeriod
+        );
+        this.newOrder.workStatus = 'В работе'; // Установите статус по умолчанию
+        this.newOrder.bidId = selectedBid.id;
+      } else {
+        // Сбросить значения, если заявка не выбрана
+        this.newOrder.startDate = '';
+        this.newOrder.endDate = '';
+        this.newOrder.workStatus = 'В работе';
+        this.newOrder.bidId = '';
+      }
     },
   },
 };

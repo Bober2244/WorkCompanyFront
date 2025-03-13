@@ -3,19 +3,36 @@
     <!-- Фильтры -->
     <div class="filters my-3">
       <div class="filter-item">
-        <label for="dateFilter">Дата заявки:</label>
+        <label for="dateFilter">Начальный фильтр даты:</label>
         <input
             type="date"
-            v-model="dateFilter"
+            v-model="startDateFilter"
+            class="form-control"
+        />
+      </div>
+      <div class="filter-item">
+        <label for="endDateFilter">Конечный фильтр даты:</label>
+        <input
+            type="date"
+            v-model="endDateFilter"
             class="form-control"
         />
       </div>
 
       <div class="filter-item">
-        <label for="constructionFilter">Срок строительства (в днях):</label>
+        <label for="constructionFilter">Минимальный срок строительства (в днях):</label>
         <input
             type="number"
-            v-model="constructionFilter"
+            v-model="minConstructionFilter"
+            class="form-control"
+            placeholder="Введите срок строительства"
+        />
+      </div>
+      <div class="filter-item">
+        <label for="maxConstructionFilter">Максимальный срок строительства (в днях):</label>
+        <input
+            type="number"
+            v-model="maxConstructionFilter"
             class="form-control"
             placeholder="Введите срок строительства"
         />
@@ -69,8 +86,10 @@ export default {
     return {
       bids: [],
       customers: [],
-      dateFilter: '',
-      constructionFilter: '',
+      startDateFilter: '',
+      endDateFilter: '',
+      minConstructionFilter: '',
+      maxConstructionFilter: '',
       isCreateBidModalOpen: false,
       isCreateOrderModalOpen: false,
     };
@@ -78,8 +97,8 @@ export default {
   computed: {
     filteredBids() {
       return this.bids.filter(bid => {
-        const matchesDate = !this.dateFilter || bid.dateOfRequest === this.dateFilter;
-        const matchesConstructionPeriod = !this.constructionFilter || bid.constructionPeriod === this.constructionFilter;
+        const matchesDate = !this.startDateFilter || bid.dateOfRequest >= this.startDateFilter && bid.dateOfRequest <= this.endDateFilter;
+        const matchesConstructionPeriod = !this.minConstructionFilter || bid.constructionPeriod >= this.minConstructionFilter && bid.constructionPeriod <= this.maxConstructionFilter;
         return matchesDate && matchesConstructionPeriod;
       });
     }
@@ -137,8 +156,10 @@ export default {
       this.isCreateBidModalOpen = false;
     },
     resetFilters() {
-      this.dateFilter = '';
-      this.constructionFilter = '';
+      this.startDateFilter = '';
+      this.endDateFilter = '';
+      this.minConstructionFilter = '';
+      this.maxConstructionFilter = '';
     }
   },
   mounted() {

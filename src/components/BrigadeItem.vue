@@ -4,9 +4,12 @@
     <p><strong>{{ brigade.name }}</strong></p>
     <p>Количество работников: {{ brigade.workerCount }}</p>
     <button @click="navigateToManagement">Управлять</button>
-    <button @click="deleteBrigade" :disabled="isDeleting">
+    <!--<button
+        @click="deleteBrigade"
+        :disabled="isDeleting"
+    >
       {{ isDeleting ? "Удаление..." : "Удалить" }}
-    </button>
+    </button>-->
 
   </div>
 </template>

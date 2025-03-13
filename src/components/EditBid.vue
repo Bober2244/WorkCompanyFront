@@ -4,20 +4,12 @@
       <h3>Изменить заявку</h3>
       <form @submit.prevent="saveChanges">
         <div class="form-group">
-          <label for="dateOfRequest">Дата заявки:</label>
-          <input type="date" v-model="localBid.dateOfRequest" required />
+          <label for="objectName">Название объекта:</label>
+          <input type="text" v-model="localBid.objectName" required/>
         </div>
         <div class="form-group">
           <label for="constructionPeriod">Срок строительства:</label>
           <input type="number" v-model="localBid.constructionPeriod" required />
-        </div>
-        <div class="form-group">
-          <label for="customerId">Заказчик:</label>
-          <select v-model="localBid.customerId" required class="wide-select">
-            <option v-for="customer in customers" :key="customer.id" :value="customer.id">
-              {{ customer.fullName }}
-            </option>
-          </select>
         </div>
         <div class="form-actions">
           <button type="submit" class="action-button save-button" @click="saveChanges">Сохранить</button>

@@ -10,7 +10,7 @@
         {{ isDeleting ? "Удаление..." : "Удалить" }}
       </button>
       <button @click="editMaterial(material)" :disabled="isEditing === material.id">
-        {{ isEditing === material.id ? "Редактирование..." : "Редактировать" }}
+        {{ isEditing === material.id ? "Закупка..." : "Закупить" }}
       </button>
     </div>
 
@@ -43,11 +43,11 @@
 
     <!-- Форма для редактирования материала -->
     <div v-if="isEditing" class="edit-material-form">
-      <h3>Редактировать материал</h3>
+      <h3>Закупить материал</h3>
       <form @submit.prevent="updateMaterial">
         <div>
           <label for="editName">Название</label>
-          <input type="text" id="editName" v-model="editedMaterial.name" required />
+          <input type="text" id="editName" v-model="editedMaterial.name" readonly />
         </div>
         <div>
           <label for="editQuantity">Количество</label>
@@ -55,10 +55,10 @@
         </div>
         <div>
           <label for="editMeasurementUnit">Единица измерения</label>
-          <input type="text" id="editMeasurementUnit" v-model="editedMaterial.measurementUnit" required />
+          <input type="text" id="editMeasurementUnit" v-model="editedMaterial.measurementUnit" readonly />
         </div>
         <button type="submit" :disabled="isSubmitting">
-          {{ isSubmitting ? 'Редактирование...' : 'Сохранить' }}
+          {{ isSubmitting ? 'Закупка...' : 'Сохранить' }}
         </button>
         <button type="button" @click="cancelEdit">Отменить</button>
       </form>
