@@ -52,6 +52,7 @@
 import axios from "axios";
 import OrderItemForAdmin from "@/components/OrderItemForAdmin.vue";
 import AddOrder from "@/components/AddOrder.vue";
+
 export default {
   components: {
     AddOrder,
@@ -69,19 +70,7 @@ export default {
   computed: {
     filteredOrders() {
       return this.orders.filter(order => {
-        // Проверяем фильтр по дате начала
-        const matchesStartDate = this.dateFilter
-            ? order.startDate === this.dateFilter
-            : true;
-
-        // Проверяем фильтр по дате окончания
-        const matchesEndDate = this.deliveryDateFilter
-            ? order.endDate === this.deliveryDateFilter
-            : true;
-
-        // Исключаем заказы со статусом "Создан"
-        // Возвращаем true, если заказ соответствует всем условиям
-        return matchesStartDate && matchesEndDate;
+        return !this.dateFilter || order.startDate >= this.dateFilter && order.endDate <= this.deliveryDateFilter;
       });
     },
   },

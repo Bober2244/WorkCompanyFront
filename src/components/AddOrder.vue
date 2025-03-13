@@ -16,10 +16,7 @@
         <!-- Статус -->
         <div class="form-group">
           <label for="workStatus">Статус работы:</label>
-          <select v-model="newOrder.workStatus" readonly>
-            <option value="В работе">В работе</option>
-            <option value="Готово">Готово</option>
-          </select>
+          <input type="text" v-model="newOrder.workStatus" readonly />
         </div>
         <!-- Привязка к заявке -->
         <div class="form-group">
