@@ -19,6 +19,17 @@
             class="form-control"
         />
       </div>
+
+      <div class="filter-item">
+        <label for="dateFilter">Статус заказа:</label>
+        <select
+            v-model="statusFilter"
+            class="form-control">
+          <option></option>
+          <option>Готово</option>
+          <option>В работе</option>
+        </select>
+      </div>
     </div>
 
     <!-- Кнопки сброса и управления бригадой -->
@@ -64,13 +75,15 @@ export default {
       orders: [], // Список заказов
       dateFilter: '', // Фильтр по дате
       deliveryDateFilter: '', // Фильтр по сроку доставки
+      statusFilter: '',
       isCreateOrderModalOpen: false, // Состояние модального окна для создания заказа
     };
   },
   computed: {
     filteredOrders() {
       return this.orders.filter(order => {
-        return !this.dateFilter || order.startDate >= this.dateFilter && order.endDate <= this.deliveryDateFilter;
+        return(!this.dateFilter || order.startDate >= this.dateFilter && order.endDate <= this.deliveryDateFilter) &&
+            (this.statusFilter === order.workStatus || this.statusFilter === '');
       });
     },
   },

@@ -51,7 +51,8 @@
         </div>
 
         <div class="form-group" v-if="form.role === '1'">
-          <input  class="form-control" v-model="customer.dateOfBirth" type="date" placeholder="Дата рождения" />
+          <label class="input-wrapper">Дата рождения</label>
+          <input  class="form-control" v-model="customer.dateOfBirth" type="date" />
           <input   class="form-control" v-model="customer.phoneNumber" type="tel" placeholder="Номер телефона" />
         </div>
 

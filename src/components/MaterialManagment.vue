@@ -5,10 +5,10 @@
       <p><strong>{{ material.name }}</strong></p>
       <p>Количество: {{ material.quantity }} {{ material.measurementUnit }}</p>
 
-      <!-- Кнопки для удаления и редактирования -->
+      <!-- Кнопки для удаления и редактирования
       <button @click="deleteMaterial(material.id)" :disabled="isDeleting">
         {{ isDeleting ? "Удаление..." : "Удалить" }}
-      </button>
+      </button> -->
       <button @click="editMaterial(material)" :disabled="isEditing === material.id">
         {{ isEditing === material.id ? "Закупка..." : "Закупить" }}
       </button>
@@ -148,6 +148,10 @@ export default {
     async updateMaterial() {
       this.isSubmitting = true; // Устанавливаем состояние загрузки
       try {
+        if (this.editedMaterial.quantity < 100) {
+          alert("Количество должно быть не менее 100")
+          return;
+        }
         const response = await axios.patch(`https://localhost:7265/Materials/${this.editedMaterial.id}`, this.editedMaterial);
         // Обновляем данные материала в списке
         const index = this.materials.findIndex(material => material.id === this.editedMaterial.id);

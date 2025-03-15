@@ -176,10 +176,11 @@ export default {
         endDate: updatedOrder.endDate,
         workStatus: this.selectedOrder.workStatus,
         bidId: Number(updatedOrder.bidId),
+        objectName: updatedOrder.objectName,
       };
 
       axios
-          .patch(`https://localhost:7265/Orders/${this.selectedOrder.id}`, payload)
+          .patch(`https://localhost:7265/Bids/${this.selectedOrder.id}`, payload)
           .then(() => {
             console.log("Изменения заказа сохранены");
             this.closeOrderModal();
