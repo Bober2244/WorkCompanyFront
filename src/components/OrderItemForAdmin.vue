@@ -1,59 +1,63 @@
 <template>
   <div class="order-item">
-    <div class="order-item__details">
-      <p><strong>Заказ #</strong>{{ order.id }}</p>
-      <p><strong>Объект:</strong> {{ order?.bid.objectName }}</p>
-      <p><strong>Дата начала:</strong> {{ order.startDate }}</p>
-      <p><strong>Дата конца:</strong> {{ order.endDate }}</p>
-      <p><strong>Статус:</strong> {{ order.workStatus }}</p>
-      <p><strong>Откликнувшиеся бригады:</strong></p>
-      <ul>
-        <li v-for="brigade in order.brigadeOrders" :key="brigade.id">
-          {{ brigade.brigade.name }}
-        </li>
-      </ul>
+    <div class="order-column">
+      <div class="order-item__details">
+        <p><strong>Заказ #</strong>{{ order.id }}</p>
+        <p><strong>Объект:</strong> {{ order?.bid.objectName }}</p>
+        <p><strong>Дата начала:</strong> {{ order.startDate }}</p>
+        <p><strong>Дата конца:</strong> {{ order.endDate }}</p>
+        <p><strong>Статус:</strong> {{ order.workStatus }}</p>
+        <p><strong>Откликнувшиеся бригады:</strong></p>
+        <ul>
+          <li v-for="brigade in order.brigadeOrders" :key="brigade.id">
+            {{ brigade.brigade.name }}
+          </li>
+        </ul>
 
-      <p><strong>Привязанные материалы:</strong></p>
-      <ul v-if="attachedMaterials.length">
-        <li v-for="material in attachedMaterials" :key="material.id">
-          {{ material.name }} ({{ material.quantity }} {{ material.measurementUnit }})
-        </li>
-      </ul>
-      <p v-else>Нет привязанных материалов.</p>
+        <p><strong>Привязанные материалы:</strong></p>
+        <ul v-if="attachedMaterials.length">
+          <li v-for="material in attachedMaterials" :key="material.id">
+            {{ material.name }} ({{ material.quantity }} {{ material.measurementUnit }})
+          </li>
+        </ul>
+        <p v-else>Нет привязанных материалов.</p>
+      </div>
+
+      <div class="order-item__actions" v-if="order.workStatus !== 'Готово'">
+        <!--<button
+                class="action-button"
+                :disabled="isOrderModalOpen"
+                @click="openOrderModal(order)"
+            >
+              Изменить
+            </button>-->
+        <button @click="$router.push({ name: 'MaterialForOrder', params: { orderId: order.id } })">
+          Материалы к заказу
+        </button>
+      </div>
+
+      <edit-order-status
+          :show="isOrderModalOpen"
+          :order="selectedOrder"
+          :bids="availableBids"
+          @save="handleOrderSave"
+          @close="closeOrderModal"
+      />
     </div>
 
-    <div class="order-item__actions" v-if="order.workStatus !== 'Готово'">
-      <button
-          class="action-button"
-          :disabled="isOrderModalOpen"
-          @click="openOrderModal(order)"
-      >
-        Изменить
-      </button>
-      <button @click="$router.push({ name: 'MaterialForOrder', params: { orderId: order.id } })">
-        Материалы к заказу
-      </button>
-    </div>
-
-    <edit-order-status
-        :show="isOrderModalOpen"
-        :order="selectedOrder"
-        :bids="availableBids"
-        @save="handleOrderSave"
-        @close="closeOrderModal"
+    <progress-bar
+        :progress="workProgress"
     />
-
   </div>
 </template>
-
-
 
 <script>
 import axios from "axios";
 import EditOrderStatus from "@/components/EditOrderStatus.vue";
+import ProgressBar from "@/components/ProgressBar.vue";
 
 export default {
-  components: {EditOrderStatus},
+  components: {ProgressBar, EditOrderStatus},
   props: {
     order: {
       type: Object,
@@ -98,8 +102,9 @@ export default {
         console.error("Заказ не найден");
         return;
       }
-      this.selectedOrder = { ...order }; // Создаем копию заказа
-      this.isOrderModalOpen = true; // Открываем модальное окно
+      this.selectedOrder = {...order};
+      console.log("selectedOrder", this.selectedOrder);
+      this.isOrderModalOpen = true;
     },
     async fetchAttachedMaterials() {
       try {
@@ -110,22 +115,26 @@ export default {
       }
     },
   },
+  computed: {
+    workProgress() {
+      let ready = this.order.brigadeOrders.filter(bo => bo.workStatus === "Готово").length;
+      let percent = ready / this.order.brigadeOrders.length * 100
+      return this.order.brigadeOrders.length === 0 ? 0 : percent;
+    }
+  },
 };
 </script>
-
-
-
-
-
 
 <style scoped>
 .status-готово {
   color: green;
   font-weight: bold;
 }
+
 .status-выполняется {
   color: orange;
 }
+
 .status-начато {
   color: blue;
 }
@@ -149,6 +158,10 @@ export default {
 .order-item__actions {
   display: flex;
   gap: 10px;
+}
+
+.order-column {
+  flex-direction: column;
 }
 
 .action-button {

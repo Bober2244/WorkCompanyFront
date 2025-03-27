@@ -1,44 +1,51 @@
 <template>
   <div class="order-item">
-    <div class="order-item__details">
-      <p><strong>Заказ #</strong>{{ order.id }}</p>
-      <p><strong>Дата начала:</strong> {{ order.startDate }}</p>
-      <p><strong>Дата конца:</strong> {{ order.endDate }}</p>
-      <p><strong>Статус:</strong> {{ order.workStatus }}</p>
-      <p><strong>Объект:</strong> {{ order?.bid.objectName }}</p>
-      <strong>Бригады:</strong>
-      <ul>
-        <li v-for="brigade in order.brigadeOrders" :key="brigade.id">
-          {{ brigade.brigade.name }}
-        </li>
-      </ul>
+    <div class="order-column">
+      <div class="order-item__details">
+        <p><strong>Заказ #</strong>{{ order.id }}</p>
+        <p><strong>Дата начала:</strong> {{ order.startDate }}</p>
+        <p><strong>Дата конца:</strong> {{ order.endDate }}</p>
+        <p><strong>Статус:</strong> {{ order.workStatus }}</p>
+        <p><strong>Объект:</strong> {{ order?.bid.objectName }}</p>
+        <strong>Бригады:</strong>
+        <ul>
+          <li v-for="brigade in order.brigadeOrders" :key="brigade.id">
+            {{ brigade.brigade.name }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="order-item__actions" v-if="order.workStatus !== 'Готово'">
+        <button
+            v-if="!isUserResponsible"
+            class="action-button"
+            :disabled="isOrderModalOpen"
+            @click="openOrderModal(order)"
+        >
+          Изменить
+        </button>
+
+        <!-- Кнопка "Откликнуться" -->
+        <button
+            class="action-button"
+            v-if="isUserResponsible"
+            @click="respond"
+        >
+          Откликнуться
+        </button>
+      </div>
+
+      <edit-order-status
+          :show="isOrderModalOpen"
+          :order="selectedOrder"
+          :bids="availableBids"
+          @save="handleOrderSave"
+          @close="closeOrderModal"
+      />
     </div>
 
-    <div class="order-item__actions" v-if="order.workStatus !== 'Готово'">
-      <!--<button
-          class="action-button"
-          :disabled="isOrderModalOpen"
-          @click="openOrderModal(order)"
-      >
-        Изменить
-      </button>-->
-      <!-- Кнопка "Откликнуться" -->
-      <button
-          class="action-button"
-          v-if="isUserResponsible"
-          @click="respond"
-      >
-        Откликнуться
-      </button>
-    </div>
-
-
-    <edit-order-status
-        :show="isOrderModalOpen"
-        :order="selectedOrder"
-        :bids="availableBids"
-        @save="handleOrderSave"
-        @close="closeOrderModal"
+    <progress-bar
+        :progress="workProgress"
     />
   </div>
 </template>
@@ -47,9 +54,10 @@
 <script>
 import axios from "axios";
 import EditOrderStatus from "@/components/EditOrderStatus.vue";
+import ProgressBar from "@/components/ProgressBar.vue";
 
 export default {
-  components: {EditOrderStatus},
+  components: {ProgressBar, EditOrderStatus},
   props: {
     order: {
       type: Object,
@@ -61,7 +69,6 @@ export default {
       availableBids: [],
       selectedOrder: null,
       isOrderModalOpen: false,
-      brigades: [], // Список бригад
       isUserResponsible: false,
     };
   },
@@ -69,23 +76,35 @@ export default {
     closeOrderModal() {
       this.isOrderModalOpen = false;
     },
-    handleOrderSave(updatedOrder) {
-      console.log("Обновленный заказ:", updatedOrder);
-      const payload = updatedOrder.workStatus; // Передаем только статус как строку
-
-      axios
-          .patch(`https://localhost:7265/Orders/${this.selectedOrder.id}/status`, payload, {
-            headers: {
-              "Content-Type": "application/json", // Указываем формат данных
-            },
-          })
-          .then((response) => {
-            console.log("Изменения заказа сохранены:", response.data);
-            this.closeOrderModal();
-          })
-          .catch((error) => {
-            console.error("Ошибка при сохранении заказа:", error);
-          });
+    async handleOrderSave(updatedOrder) {
+      try {
+        const userId = localStorage.getItem("userId");
+        const brigade = (await axios.get(`https://localhost:7265/Brigades/user-brigade/${userId}`)).data;
+        const brigadeOrder = updatedOrder.brigadeOrders.filter(bo => bo.brigade.name === brigade.name)[0]
+        console.log("dto", brigadeOrder);
+        axios
+            .patch(
+                `https://localhost:7265/BrigadeOrders/${brigadeOrder.id}`,
+                {
+                  orderId: this.selectedOrder.id,
+                  brigadeId: brigadeOrder.brigadeId,
+                  workStatus: brigadeOrder.workStatus,
+                },
+                {
+                  headers: {
+                    "Content-Type": "application/json", // Указываем формат данных
+                  },
+                })
+            .then((response) => {
+              console.log("Изменения заказа сохранены:", response.data);
+              this.closeOrderModal();
+            })
+            .catch((error) => {
+              alert("Ошибка при сохранении заказа:", error);
+            });
+      } catch (error) {
+        alert("Ошибка при сохранении:", error)
+      }
     },
     openOrderModal(order) {
       if (!order) {
@@ -102,10 +121,10 @@ export default {
 
         await axios
             .post(`https://localhost:7265/orders/${this.order.id}/apply`,
-              Number(response.data.id), // отправляем только brigadeId как число
-            {
-              headers: { "Content-Type": "application/json" },
-            })
+                Number(response.data.id), // отправляем только brigadeId как число
+                {
+                  headers: {"Content-Type": "application/json"},
+                })
       } catch (error) {
         console.error("Ошибка при загрузке бригад:", error);
         alert("Не удалось загрузить список бригад.");
@@ -147,8 +166,34 @@ export default {
       },
     },
   },
+  computed: {
+    workProgress() {
+      let ready = this.order.brigadeOrders.filter(bo => bo.workStatus === "Готово").length;
+      let percent = ready / this.order.brigadeOrders.length * 100
+
+      let tempOrder = { ...this.order };
+      if (percent === 100) {
+        tempOrder.workStatus = "Готово"
+      }
+      else {
+        tempOrder.workStatus = "В работе"
+      }
+      if (this.order.workStatus !== tempOrder.workStatus) {
+        axios.patch(
+            `https://localhost:7265/Orders/${this.order.id}/status`, tempOrder.workStatus,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+        )
+      }
+      return this.order.brigadeOrders.length === 0 ? 0 : percent;
+    },
+  },
   mounted() {
     this.checkResponsibility(this.order);
+    console.log(this.order);
   }
 };
 </script>
@@ -159,9 +204,11 @@ export default {
   color: green;
   font-weight: bold;
 }
+
 .status-выполняется {
   color: orange;
 }
+
 .status-начато {
   color: blue;
 }
@@ -225,6 +272,10 @@ export default {
 .action-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.order-column {
+  flex-direction: column;
 }
 
 .modal {

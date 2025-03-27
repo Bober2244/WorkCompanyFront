@@ -46,6 +46,9 @@
             <p :class="`status-${order.workStatus.toLowerCase()}`"><strong>Статус работы:</strong> {{
                 order.workStatus
               }}</p>
+            <progress-bar
+                :progress="workProgress"
+            />
             <p><strong>Откликнувшиеся бригады:</strong></p>
             <ul>
               <li v-for="brigade in order.brigadeOrders" :key="brigade.id">
@@ -87,9 +90,10 @@
 import axios from "axios";
 import EditBid from "@/components/EditBid.vue";
 import EditOrder from "@/components/EditOrder.vue";
+import ProgressBar from "@/components/ProgressBar.vue";
 
 export default {
-  components: {EditOrder, EditBid},
+  components: {ProgressBar, EditOrder, EditBid},
   props: {
     bid: {
       type: Object,
@@ -111,7 +115,6 @@ export default {
   },
   mounted() {
     this.loadBids();
-
   },
   methods: {
 
@@ -214,12 +217,17 @@ export default {
       }
     }
   },
+  computed: {
+    workProgress() {
+      let ready = this.bid.orders[0].brigadeOrders.filter(bo => bo.workStatus === "Готово").length;
+      let percent = ready / this.bid.orders[0].brigadeOrders.length * 100
+      return this.bid.orders[0].brigadeOrders.length === 0 ? 0 : percent;
+    }
+  },
 };
 </script>
 
 <style scoped>
-
-
 .bid-card {
   border: 1px solid #ddd;
   border-radius: 8px;

@@ -41,7 +41,7 @@
     <!-- Список заказов -->
     <div class="orders__list my-3">
       <div v-for="order in filteredOrders" :key="order.id" class="my-3">
-        <OrderItem :order="order" />
+        <OrderItem :order="order"/>
       </div>
     </div>
 
@@ -52,6 +52,7 @@
 <script>
 import OrderItem from "@/components/OrderItem.vue";
 import axios from "axios";
+
 export default {
   components: {
     OrderItem,
@@ -69,9 +70,10 @@ export default {
   computed: {
     filteredOrders() {
       return this.orders.filter(order => {
-        return(!this.dateFilter || order.startDate >= this.dateFilter && order.endDate <= this.deliveryDateFilter) &&
+        return (!this.dateFilter || order.startDate >= this.dateFilter && order.endDate <= this.deliveryDateFilter) &&
             (this.statusFilter === order.workStatus || this.statusFilter === '');
-      });
+      })
+          .sort();
     },
   },
   methods: {

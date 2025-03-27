@@ -5,13 +5,15 @@
       <form @submit.prevent="saveChanges">
         <div class="form-group">
           <label for="workStatus">Статус работы:</label>
-          <select v-model="localOrder.workStatus" required>
+          <select
+              v-model="order.brigadeOrders.filter(bo => bo.brigade.name === this.brigade.name)[0].workStatus" required
+              @change="saveChanges"
+          >
             <option value="В работе">В работе</option>
             <option value="Готово">Готово</option>
           </select>
         </div>
         <div class="form-actions">
-          <button type="submit" class="action-button save-button">Сохранить</button>
           <button
               type="button"
               class="action-button cancel-button"
@@ -26,6 +28,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   props: {
     show: {
@@ -39,22 +43,30 @@ export default {
   },
   data() {
     return {
-      localOrder: { ...this.order }, // Локальная копия заказа для редактирования
+      brigade: {},
+      userId: localStorage.getItem("userId"),
     };
   },
   methods: {
-    saveChanges() {
-      if (!this.localOrder.workStatus) {
+    async saveChanges() {
+      if (!this.order.workStatus) {
         console.error("Ошибка: статус работы не выбран.");
         return;
       }
-      this.$emit("save", this.localOrder); // Отправляем обновленный статус родителю
+      this.$emit("save", this.order); // Отправляем обновленный статус родителю
       this.closeModal();
     },
     closeModal() {
-      this.$emit("close"); // Сообщаем родителю о закрытии модального окна
+      this.$emit("close");
     },
   },
+  async mounted() {
+     await axios.get(`https://localhost:7265/Brigades/user-brigade/${this.userId}`)
+        .then((response) => {
+          if (response.data !== "")
+            this.brigade = response.data;
+        })
+  }
 };
 </script>
 
@@ -98,7 +110,7 @@ export default {
 }
 .form-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 20px;
 }
 .action-button {

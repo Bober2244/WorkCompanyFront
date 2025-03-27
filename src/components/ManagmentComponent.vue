@@ -62,6 +62,7 @@ export default {
       axios
           .get(`https://localhost:7265/Brigades/user-brigade/${userId}`)
           .then((response) => {
+            if (response.data !== "")
             this.brigades = [response.data]; // Добавляем в массив, так как возвращается одна бригада
           })
           .catch((error) => {

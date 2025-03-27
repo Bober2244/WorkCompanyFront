@@ -122,6 +122,7 @@ export default {
     resetFilters() {
       this.dateFilter = '';
       this.deliveryDateFilter = '';
+      this.statusFilter = '';
     },
     async loadOrders() {
       await axios.get("https://localhost:7265/Orders")

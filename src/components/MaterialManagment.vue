@@ -157,7 +157,7 @@ export default {
         const index = this.materials.findIndex(material => material.id === this.editedMaterial.id);
         this.materials.splice(index, 1, response.data); // Заменяем старый материал новым
         this.cancelEdit(); // Отменяем режим редактирования
-        alert("Материал успешно обновлён!");
+        alert("Материал успешно куплен!");
       } catch (error) {
         console.error("Ошибка при редактировании материала:", error);
         alert("Не удалось обновить материал. Попробуйте снова.");
