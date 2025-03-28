@@ -35,6 +35,7 @@
     <!-- Кнопки сброса и управления бригадой -->
     <div class="button-container">
       <button class="reset-button" @click="resetFilters">Сбросить фильтры</button>
+      <button class="reset-button" @click="downloadSmeta">Скачать смету</button>
       <button class="management-button" @click="goToMaterial">Перейти к управлению материалами</button>
       <button class="create-button" @click="openCreateOrderModal">Создать заказ</button>
 
@@ -63,6 +64,7 @@
 import axios from "axios";
 import OrderItemForAdmin from "@/components/OrderItemForAdmin.vue";
 import AddOrder from "@/components/AddOrder.vue";
+import { saveAs } from 'file-saver';
 
 export default {
   components: {
@@ -134,6 +136,13 @@ export default {
             console.error("Ошибка при загрузке заказов:", error);
           });
     },
+    async downloadSmeta() {
+      const response = await axios.get("https://localhost:7265/Purchase/purchasesSmeta", {
+        responseType: 'blob'
+      });
+
+      saveAs(new Blob([response.data], {type: "application/vnd.ms-excel"}), "Смета_закупок.xlsx");
+    }
   },
   mounted() {
     this.loadBids();
