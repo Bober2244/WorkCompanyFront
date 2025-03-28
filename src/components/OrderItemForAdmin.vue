@@ -24,23 +24,21 @@
       </div>
 
       <div class="order-item__actions" v-if="order.workStatus !== 'Готово'">
-        <!--<button
-                class="action-button"
-                :disabled="isOrderModalOpen"
-                @click="openOrderModal(order)"
-            >
-              Изменить
-            </button>-->
         <button @click="$router.push({ name: 'MaterialForOrder', params: { orderId: order.id } })">
           Материалы к заказу
         </button>
+        <button
+            v-if="order.brigadeOrders.length > 0"
+            @click="openOrderModal(order)"
+        >
+          Снятие бригад
+        </button>
       </div>
 
-      <edit-order-status
+      <remove-brigade-from-order
           :show="isOrderModalOpen"
           :order="selectedOrder"
-          :bids="availableBids"
-          @save="handleOrderSave"
+          @removed="handleBrigadeRemoved"
           @close="closeOrderModal"
       />
     </div>
@@ -53,11 +51,11 @@
 
 <script>
 import axios from "axios";
-import EditOrderStatus from "@/components/EditOrderStatus.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
+import RemoveBrigadeFromOrder from "@/components/RemoveBrigadeFromOrder.vue";
 
 export default {
-  components: {ProgressBar, EditOrderStatus},
+  components: {RemoveBrigadeFromOrder, ProgressBar},
   props: {
     order: {
       type: Object,
@@ -79,25 +77,19 @@ export default {
     closeOrderModal() {
       this.isOrderModalOpen = false;
     },
-    handleOrderSave(updatedOrder) {
-      console.log("Обновленный заказ:", updatedOrder);
-      const payload = updatedOrder.workStatus; // Передаем только статус как строку
+    handleBrigadeRemoved({ brigadeOrderId }) {
+      // Создаем новый объект заказа без удаленной бригады
+      const updatedOrder = {
+        ...this.order,
+        brigadeOrders: this.order.brigadeOrders.filter(bo => bo.id !== brigadeOrderId)
+      };
 
-      axios
-          .patch(`https://localhost:7265/Orders/${this.selectedOrder.id}/status`, payload, {
-            headers: {
-              "Content-Type": "application/json", // Указываем формат данных
-            },
-          })
-          .then((response) => {
-            console.log("Изменения заказа сохранены:", response.data);
-            this.closeOrderModal();
-          })
-          .catch((error) => {
-            console.error("Ошибка при сохранении заказа:", error);
-          });
+      // Отправляем событие с обновленным заказом
+      this.$emit('order-updated', updatedOrder);
+      window.location.reload();
     },
     openOrderModal(order) {
+      console.log("Order now", order);
       if (!order) {
         console.error("Заказ не найден");
         return;
@@ -158,6 +150,7 @@ export default {
 .order-item__actions {
   display: flex;
   gap: 10px;
+  flex-direction: column;
 }
 
 .order-column {
